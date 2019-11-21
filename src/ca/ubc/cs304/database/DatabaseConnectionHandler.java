@@ -17,7 +17,7 @@ public class DatabaseConnectionHandler {
 	private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
 	private static final String EXCEPTION_TAG = "[EXCEPTION]";
 	private static final String WARNING_TAG = "[WARNING]";
-	//tesitng
+
 	private Connection connection = null;
 	
 	public DatabaseConnectionHandler() {
