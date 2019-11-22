@@ -5,24 +5,24 @@ public class VehicleTypeModel {
 
     private final String vtname;
     private final String features;
-    private final int wrate;
-    private final int drate;
-    private final int hrate;
-    private final int wirate;
-    private final int dirate;
-    private final int hirate;
-    private final int krate;
+    private final double wrate;
+    private final double drate;
+    private final double hrate;
+    private final double wirate;
+    private final double dirate;
+    private final double hirate;
+    private final double krate;
 
-    public VehicleTypeModel(String vtname, String features, int wr, int dr, int hr, int wi, int di, int hi, int kr) {
+    public VehicleTypeModel(String vtname, String features, double wr, double dr, double hr, double wi, double di, double hi, double kr) {
         this.vtname = vtname;
         this.features = features;
-        wrate = wr;
-        drate = dr;
-        hrate = hr;
-        wirate = wi;
-        dirate = di;
-        hirate = hi;
-        krate = kr;
+        this.wrate = wr;
+        this.drate = dr;
+        this.hrate = hr;
+        this.wirate = wi;
+        this.dirate = di;
+        this.hirate = hi;
+        this.krate = kr;
     }
 
     public String getVtname() {
@@ -33,18 +33,17 @@ public class VehicleTypeModel {
         return this.features;
     }
 
-    public ArrayList<Integer> getRates() {
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        list.add(wrate);
-        list.add(drate);
-        list.add(hrate);
-        list.add(wirate);
-        list.add(dirate);
-        list.add(hirate);
-        list.add(krate);
+    public double getWRate(){return this.wrate; }
 
-        return list;
-    }
+    public double getDRate(){return this.drate; }
 
+    public double getHRate(){return this.hrate; }
 
+    public double getWiRate(){return this.wirate; }
+
+    public double getDiRate(){return this.dirate; }
+
+    public double getHiRate(){return this.hirate; }
+
+    public double getKRate(){return this.krate; }
 }
