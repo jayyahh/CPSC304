@@ -4,6 +4,7 @@ public class VehicleModel {
     private final int vid;
     private final int vLicense;
     private final String make;
+    private final String model;
     private final int year;
     private final String color;
     private final int odometer;
@@ -13,11 +14,12 @@ public class VehicleModel {
     private final String city;
 
 
-    public VehicleModel(int vid, int vLicense, String make, int year, String color, int odometer, String status,
+    public VehicleModel(int vid, int vLicense, String make, String model, int year, String color, int odometer, String status,
                         VehicleTypeModel vt, String locn, String city) {
         this.vid = vid;
         this.vLicense = vLicense;
         this.make = make;
+        this.model = model;
         this.year = year;
         this.color = color;
         this.odometer = odometer;
@@ -41,6 +43,8 @@ public class VehicleModel {
         return this.make;
     }
 
+    public String getModel() { return this.model; }
+
     public String getStatus() {
         return this.status;
     }
@@ -56,7 +60,4 @@ public class VehicleModel {
     public String getCity() {
         return this.city;
     }
-
-
-
 }
