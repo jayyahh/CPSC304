@@ -1,3 +1,4 @@
+package ca.ubc.cs304.model;
 
 public class VehicleModel {
     private final int vid;
@@ -8,11 +9,12 @@ public class VehicleModel {
     private final int odometer;
     private final String status;
     private final String vtname;
-    private final BranchModel branch;
+    private final String locn;
+    private final String city;
 
 
-    public VehicleModel(int vid, int vLicense, String make, int year, String color, int odometer, String status, VehicleTypeModel vt,
-                        BranchModel branch) {
+    public VehicleModel(int vid, int vLicense, String make, int year, String color, int odometer, String status,
+                        VehicleTypeModel vt, String locn, String city) {
         this.vid = vid;
         this.vLicense = vLicense;
         this.make = make;
@@ -21,7 +23,9 @@ public class VehicleModel {
         this.odometer = odometer;
         this.status = status;
         this.vtname = vt.getVtname();
-        this.branch = branch;
+        this.locn = locn;
+        this.city = city;
+
 
     }
 
@@ -46,11 +50,11 @@ public class VehicleModel {
     }
 
     public String getLocation() {
-        return this.branch.getLocation();
+        return this.locn;
     }
 
     public String getCity() {
-        return this.branch.getCity();
+        return this.city;
     }
 
 

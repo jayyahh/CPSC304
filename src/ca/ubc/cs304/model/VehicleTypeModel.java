@@ -1,3 +1,5 @@
+package ca.ubc.cs304.model;
+
 import java.util.*;
 public class VehicleTypeModel {
 

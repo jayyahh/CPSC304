@@ -1,3 +1,5 @@
+package ca.ubc.cs304.model;
+
 public class CustomerModel {
     private final String cellphone;
     private final String name;
