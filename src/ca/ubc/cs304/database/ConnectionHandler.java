@@ -1,9 +1,6 @@
 package ca.ubc.cs304.database;
 
-import ca.ubc.cs304.model.CustomerModel;
-import ca.ubc.cs304.model.RentModel;
-import ca.ubc.cs304.model.ReservationModel;
-import ca.ubc.cs304.model.ReturnModel;
+import ca.ubc.cs304.model.*;
 import oracle.jdbc.driver.OracleDriver;
 
 import java.sql.*;
@@ -32,11 +29,19 @@ public class ConnectionHandler {
         }
     }
 
-    public void delete(String tableName, int id) {
+    public void delete(String tableName, String id, String idColName) {
         try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM ? WHERE branch_id = ?");
-            ps.setInt(1, Integer.parseInt(tableName));
-            ps.setInt(2, id);
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM ? WHERE ? = ?");
+            ps.setString(1, tableName);
+            ps.setString(2, idColName);
+
+            if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
+                ps.setString(3, id);
+            }
+            else {
+                int idAsInt = Integer.parseInt(id);
+                ps.setInt(3, idAsInt);
+            }
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
@@ -50,7 +55,7 @@ public class ConnectionHandler {
             rollbackConnection();
         }
     }
-
+    /** Dynamically constructs an insert statement based on given object*/
     public void insert(String tableName, Object o) {
 
         try {
@@ -123,6 +128,44 @@ public class ConnectionHandler {
 
                     ps.close();
                     break;
+                case "Vehicle":
+                    VehicleModel vehicle = (VehicleModel) Class.forName("VehicleModel").cast(o);
+                    ps = connection.prepareStatement("INSERT INTO Vehicle VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+                    ps.setInt(1, vehicle.getVid());
+                    ps.setString(2, vehicle.getvLicense());
+                    ps.setString(3, vehicle.getMake());
+                    ps.setString(4, vehicle.getModel());
+                    ps.setString(5, vehicle.getYear());
+                    ps.setString(6, vehicle.getColor());
+                    ps.setInt(7, vehicle.getOdometer());
+                    ps.setString(8,vehicle.getStatus());
+                    ps.setString(9, vehicle.getVtname());
+                    ps.setString(10, vehicle.getLocation());
+                    ps.setString(11, vehicle.getCity());
+                    ps.setString(12, vehicle.getFuelType());
+
+                    ps.executeUpdate();
+                    connection.commit();
+
+                    ps.close();
+                    break;
+                case "VehicleType":
+                    VehicleTypeModel vType = (VehicleTypeModel) Class.forName("VehicleTypeModel").cast(o);
+                    ps = connection.prepareStatement("INSERT INTO VehicleType VALUES (?,?,?,?,?,?,?,?)");
+                    ps.setString(1, vType.getVtname());
+                    ps.setString(2, vType.getFeatures());
+                    ps.setDouble(3, vType.getWRate());
+                    ps.setDouble(4, vType.getDRate());
+                    ps.setDouble(5, vType.getHRate());
+                    ps.setDouble(6, vType.getDiRate());
+                    ps.setDouble(7, vType.getHiRate());
+                    ps.setDouble(8,vType.getKRate());
+
+                    ps.executeUpdate();
+                    connection.commit();
+
+                    ps.close();
+                    break;
                 default:
                     System.out.println("No available model type.");
             }
@@ -132,9 +175,50 @@ public class ConnectionHandler {
             rollbackConnection();
         }
         catch (ClassNotFoundException e) {
-            System.out.println("The object type you gave me wasn't found :(");
+            System.out.println("The object type given was not found.");
         }
     }
+
+    /** This implementation of the update method can only update one parameter at a time */
+
+    public void update(String tableName, String pkColName, String pk, String colName, String var, boolean updateIntValue) {
+        try {
+            PreparedStatement ps = this.connection.prepareStatement("UPDATE ? SET ? = ? WHERE ? = ?");
+            ps.setString(1, tableName);
+            ps.setString(2, colName);
+            if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
+                ps.setString(3, var);
+            }
+            else {
+                int varAsInt = Integer.parseInt(var);
+                ps.setInt(3, varAsInt);
+            }
+
+            ps.setString(4, pkColName);
+
+            if (updateIntValue) {
+                int pkAsInt = Integer.parseInt(pk);
+                ps.setInt(5, pkAsInt);
+            }
+            else {
+                ps.setString(5, pk);
+            }
+
+            int rowCount = ps.executeUpdate();
+
+            if (rowCount == 0) {
+                System.out.println("[WARNING] " + tableName + " " + pk + " does not exist!");
+            }
+
+            this.connection.commit();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println("[EXCEPTION] " + e.getMessage());
+            this.rollbackConnection();
+        }
+
+    }
+
 
 
     public boolean login(String username, String password) {
