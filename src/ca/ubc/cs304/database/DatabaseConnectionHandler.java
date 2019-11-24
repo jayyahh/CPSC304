@@ -346,7 +346,7 @@ public class DatabaseConnectionHandler {
 			defaultConfNo = 1000000 + rs2.getInt("nums");
 		}
 
-		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDate, fromTime, toDate, toTime, location);
+		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDate, toDate, location);
 		insert("Reservation", model);
 
 		return model;
@@ -617,7 +617,7 @@ public class DatabaseConnectionHandler {
 			PreparedStatement ps;
 			switch (tableName) {
 				case "Customer":
-					CustomerModel customer = (CustomerModel) Class.forName("CustomerModel").cast(o);
+					CustomerModel customer = (CustomerModel) Class.forName("ca.ubc.cs304.model.CustomerModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?)");
 					ps.setString(1, customer.getdLicense());
 					ps.setString(2, customer.getName());
@@ -630,14 +630,13 @@ public class DatabaseConnectionHandler {
 					ps.close();
 					break;
 				case "Return":
-					ReturnModel returnModel = (ReturnModel) Class.forName("ReturnModel").cast(o);
+					ReturnModel returnModel = (ReturnModel) Class.forName("ca.ubc.cs304.model.ReturnModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO return VALUES (?,?,?,?,?,?)");
 					ps.setInt(1, returnModel.getRid());
-					ps.setDate(2, returnModel.getReturnDate());
-					ps.setTime(3, returnModel.getReturnTime());
-					ps.setInt(4, returnModel.getOdometer());
-					ps.setBoolean(5, returnModel.isFullTank());
-					ps.setDouble(6, returnModel.getValue());
+					ps.setTimestamp(2, returnModel.getReturnDate());
+					ps.setInt(3, returnModel.getOdometer());
+					ps.setBoolean(4, returnModel.isFullTank());
+					ps.setDouble(5, returnModel.getValue());
 
 					ps.executeUpdate();
 					connection.commit();
@@ -645,20 +644,18 @@ public class DatabaseConnectionHandler {
 					ps.close();
 					break;
 				case "Rent":
-					RentModel rent = (RentModel) Class.forName("RentModel").cast(o);
+					RentModel rent = (RentModel) Class.forName("ca.ubc.cs304.model.RentModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO rent VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 					ps.setInt(1, rent.getRid());
 					ps.setInt(2, rent.getVid());
 					ps.setString(3, rent.getdLicense());
-					ps.setDate(4, rent.getFromDate());
-					ps.setTime(5, rent.getFromTime());
-					ps.setDate(6, rent.getToDate());
-					ps.setTime(7, rent.getToTime());
-					ps.setInt(8, rent.getOdometer());
-					ps.setString(9, rent.getCardName());
-					ps.setInt(10, rent.getCardNo());
-					ps.setDate(11, rent.getExpDate());
-					ps.setInt(12, rent.getConfNo());
+					ps.setTimestamp(4, rent.getFromDate());
+					ps.setTimestamp(5, rent.getToDate());
+					ps.setInt(6, rent.getOdometer());
+					ps.setString(7, rent.getCardName());
+					ps.setInt(8, rent.getCardNo());
+					ps.setDate(9, rent.getExpDate());
+					ps.setInt(10, rent.getConfNo());
 
 					ps.executeUpdate();
 					connection.commit();
@@ -666,23 +663,21 @@ public class DatabaseConnectionHandler {
 					ps.close();
 					break;
 				case "Reservation":
-					ReservationModel reservation = (ReservationModel) Class.forName("ReservationModel").cast(o);
+					ReservationModel reservation = (ReservationModel) Class.forName("ca.ubc.cs304.model.ReservationModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO reservation VALUES (?,?,?,?,?,?,?,?)");
 					ps.setInt(1, reservation.getConfNo());
 					ps.setString(2, reservation.getVtname());
 					ps.setString(3, reservation.getdLicense());
-					ps.setDate(4, reservation.getFromDate());
-					ps.setDate(5, reservation.getToDate());
-					ps.setString(7, reservation.getLocation());
-
-
+					ps.setTimestamp(4, reservation.getFromDate());
+					ps.setTimestamp(5, reservation.getToDate());
+					ps.setString(6, reservation.getLocation());
 					ps.executeUpdate();
 					connection.commit();
 
 					ps.close();
 					break;
 				case "Vehicle":
-					VehicleModel vehicle = (VehicleModel) Class.forName("VehicleModel").cast(o);
+					VehicleModel vehicle = (VehicleModel) Class.forName("ca.ubc.cs304.model.VehicleModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO Vehicle VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 					ps.setInt(1, vehicle.getVid());
 					ps.setString(2, vehicle.getVLicense());
@@ -703,7 +698,7 @@ public class DatabaseConnectionHandler {
 					ps.close();
 					break;
 				case "VehicleType":
-					VehicleTypeModel vType = (VehicleTypeModel) Class.forName("VehicleTypeModel").cast(o);
+					VehicleTypeModel vType = (VehicleTypeModel) Class.forName("ca.ubc.cs304.model.VehicleTypeModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO VehicleType VALUES (?,?,?,?,?,?,?,?)");
 					ps.setString(1, vType.getVtname());
 					ps.setString(2, vType.getFeatures());
