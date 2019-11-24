@@ -1,10 +1,13 @@
 package ca.ubc.cs304.model;
 
+import java.util.Objects;
+
 public class CustomerModel {
     private final String cellphone;
     private final String name;
     private final String address;
     private final String dLicense;
+
 
     public CustomerModel(String cell, String name, String address, String dLicense) {
         this.cellphone = cell;
@@ -18,15 +21,15 @@ public class CustomerModel {
     }
 
     public String getCellPhone() {
-        return this.cellphone;
+        return Objects.requireNonNullElse(cellphone, "");
 
     }
 
     public String getName() {
-        return this.name;
+        return Objects.requireNonNullElse(name, "");
     }
 
     public String getAddress() {
-        return this.address;
+        return Objects.requireNonNullElse(address, "");
     }
 }

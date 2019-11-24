@@ -174,7 +174,7 @@ public class DatabaseConnectionHandler2 {
 													rs.getString("vLicense"),
 													rs.getString("make"),
 													rs.getString("model"),
-													rs.getInt("year"),
+													rs.getString("year"),
 						                            rs.getString("color"),
 													rs.getInt("odometer"),
 													rs.getString("status"),
