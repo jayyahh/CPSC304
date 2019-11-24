@@ -63,8 +63,6 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
             System.out.println("No available vehicles for selected dates!");
             transaction.showMainMenu(this);
         }else{
-            System.out.println("Number of available vehicles: " + result.length);
-
             for (int i = 0; i < result.length; i++) {
                 VehicleModel model = result[i];
 
@@ -83,6 +81,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
                 System.out.printf("%-15.15s", model.getFuelType());
 
                 System.out.println();
+                System.out.println("Number of available vehicles: " + result.length);
             }
         }
     }
