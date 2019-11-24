@@ -13,7 +13,8 @@ public class VehicleTypeModel {
     private final double hirate;
     private final double krate;
 
-    public VehicleTypeModel(String vtname, String features, double wr, double dr, double hr, double wi, double di, double hi, double kr) {
+    public VehicleTypeModel(String vtname, String features, double wr, double dr, double hr, double wi,
+                            double di, double hi, double kr) {
         this.vtname = vtname;
         this.features = features;
         this.wrate = wr;
@@ -33,17 +34,17 @@ public class VehicleTypeModel {
         return this.features;
     }
 
-    public double getWRate(){return this.wrate; }
+    public double getWRate(){ return this.wrate; }
 
-    public double getDRate(){return this.drate; }
+    public double getDRate(){ return this.drate; }
 
-    public double getHRate(){return this.hrate; }
+    public double getHRate(){ return this.hrate; }
 
-    public double getWiRate(){return this.wirate; }
+    public double getWiRate(){ return this.wirate; }
 
-    public double getDiRate(){return this.dirate; }
+    public double getDiRate(){ return this.dirate; }
 
-    public double getHiRate(){return this.hirate; }
+    public double getHiRate(){ return this.hirate; }
 
-    public double getKRate(){return this.krate; }
+    public double getKRate(){ return this.krate; }
 }

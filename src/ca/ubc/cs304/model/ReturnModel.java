@@ -1,9 +1,8 @@
 package ca.ubc.cs304.model;
 
 import com.sun.jdi.Value;
-
 import java.sql.Time;
-import java.util.Date;
+import java.sql.Date;
 
 public class ReturnModel {
     private final int rid;
@@ -23,13 +22,27 @@ public class ReturnModel {
         this.value = value;
     }
 
-    public int getRid() {return this.rid;}
+    public int getRid() {
+        return rid;
+    }
 
-    public Date getReturnDate(){return this.returnDate;}
-    public Time getReturnTime(){return this.returnTime;}
-    public int getOdometer(){return this.odometer;}
+    public Date getReturnDate() {
+        return returnDate;
+    }
 
-    public boolean getFullTank() {return this.fullTank;}
+    public Time getReturnTime() {
+        return returnTime;
+    }
 
-    public double getValue(){return this.value;}
+    public int getOdometer() {
+        return odometer;
+    }
+
+    public boolean isFullTank() {
+        return fullTank;
+    }
+
+    public double getValue() {
+        return value;
+    }
 }

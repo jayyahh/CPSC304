@@ -14,7 +14,6 @@ public class VehicleModel {
     private final String city;
     private final String fuelType;
 
-
     public VehicleModel(int vid, String vLicense, String make, String model, String year, String color, int odometer, String status,
                         String vt, String locn, String city, String fuelType) {
         this.vid = vid;
@@ -29,7 +28,6 @@ public class VehicleModel {
         this.locn = locn;
         this.city = city;
         this.fuelType = fuelType;
-
     }
 
     public int getVid(){
@@ -44,7 +42,21 @@ public class VehicleModel {
         return this.make;
     }
 
-    public String getModel() { return this.model; }
+    public String getModel() {
+        return this.model;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public int getOdometer() {
+        return odometer;
+    }
 
     public String getStatus() {
         return this.status;
@@ -65,16 +77,5 @@ public class VehicleModel {
     public String getFuelType() {
         return this.fuelType;
     }
-
-    public String getYear() {
-        return year;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public int getOdometer() {
-        return odometer;
-    }
 }
+
