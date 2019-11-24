@@ -39,12 +39,12 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate overall rentals report, group by branch and vehicle type
-	public DailyRentalReportModel[] generateRentalsReport(Date date) {
+	public DailyRentalReportModel[] generateRentalsReport(Timestamp date) {
 		ArrayList<DailyRentalReportModel> result = new ArrayList<DailyRentalReportModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, V.vtname, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND R.toDateTime >= ? GROUP BY V.location, V.vtname");
-			ps.setDate(1, date);
-			ps.setDate(2, date);
+			ps.setTimestamp(1, date);
+			ps.setTimestamp(2, date);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyRentalReportModel report = new DailyRentalReportModel();
@@ -62,12 +62,12 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate overall rentals report, group by branch
-	public DailyRentalReportPerBranchModel[] generateRentalsReportPerBranch(Date date) {
+	public DailyRentalReportPerBranchModel[] generateRentalsReportPerBranch(Timestamp date) {
 		ArrayList<DailyRentalReportPerBranchModel> result = new ArrayList<DailyRentalReportPerBranchModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND R.toDateTime >= ? GROUP BY V.location");
-			ps.setDate(1, date);
-			ps.setDate(2, date);
+			ps.setTimestamp(1, date);
+			ps.setTimestamp(2, date);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyRentalReportPerBranchModel report = new DailyRentalReportPerBranchModel();
@@ -84,11 +84,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate new rental across all branches of the day
-	public int generateTotalNewRental(Date date) {
+	public int generateTotalNewRental(Timestamp date) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalNew FROM Rent R WHERE R.fromDateTime = ?");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalNew");
@@ -102,12 +102,12 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate overall rentals report by branch, group by vehicle type
-	public DailyRentalReportModel[] generateRentalsReportByBranch(Date date, String branch) {
+	public DailyRentalReportModel[] generateRentalsReportByBranch(Timestamp date, String branch) {
 		ArrayList<DailyRentalReportModel> result = new ArrayList<DailyRentalReportModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.vtname, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND R.toDateTime >= ? AND V.location = ? GROUP BY V.vtname");
-			ps.setDate(1, date);
-			ps.setDate(2, date);
+			ps.setTimestamp(1, date);
+			ps.setTimestamp(2, date);
 			ps.setString(3, branch);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -125,11 +125,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate new rental of a branch of the day
-	public int generateTotalNewRentalbyBranch(Date date, String branch) {
+	public int generateTotalNewRentalbyBranch(Timestamp date, String branch) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalNew FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime = ? AND V.location = ?");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ps.setString(2, branch);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
@@ -144,12 +144,12 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate total rental of a branch
-	public int generateTotalRentalbyBranch(Date date, String branch) {
+	public int generateTotalRentalbyBranch(Timestamp date, String branch) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND ? <= R.toDateTime  AND V.location = ?");
-			ps.setDate(1, date);
-			ps.setDate(2, date);
+			ps.setTimestamp(1, date);
+			ps.setTimestamp(2, date);
 			ps.setString(3, branch);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
@@ -164,11 +164,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate overall returns report, group by branch and vehicle type
-	public DailyReturnReportModel[] generateReturnsReport(Date date) {
+	public DailyReturnReportModel[] generateReturnsReport(Timestamp date) {
 		ArrayList<DailyReturnReportModel> result = new ArrayList<DailyReturnReportModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? GROUP BY V.location, V.vtname");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyReturnReportModel report = new DailyReturnReportModel();
@@ -187,11 +187,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate subtotal returns report of all branches
-	public DailyReturnReportPerBranchModel[] generateReturnsReportPerBranch(Date date) {
+	public DailyReturnReportPerBranchModel[] generateReturnsReportPerBranch(Timestamp date) {
 		ArrayList<DailyReturnReportPerBranchModel> result = new ArrayList<DailyReturnReportPerBranchModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, COUNT(Ret.rid) AS totalReturnCount, SUM(Ret.value) AS totalBranchValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? GROUP BY V.location");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyReturnReportPerBranchModel report = new DailyReturnReportPerBranchModel();
@@ -209,11 +209,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate total daily earning across all branches
-	public int generateTotalDailyEarning(Date date){
+	public int generateTotalDailyEarning(Timestamp date){
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT SUM(R.value) AS totalNew FROM Return R WHERE R.returnDateTime = ?");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalNew");
@@ -227,11 +227,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate total number of new returns of this date, across all branches
-	public int generateTotalNewReturn(Date date) {
+	public int generateTotalNewReturn(Timestamp date) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalNew FROM Return R WHERE R.returnDateTime = ?");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalNew");
@@ -245,11 +245,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate overal returns report of a branch, group by date
-	public DailyReturnReportModel[] generateReturnsReportByBranch(Date date, String branch) {
+	public DailyReturnReportModel[] generateReturnsReportByBranch(Timestamp date, String branch) {
 		ArrayList<DailyReturnReportModel> result = new ArrayList<DailyReturnReportModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? AND V.location = ? GROUP BY V.vtname");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ps.setString(2, branch);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -268,11 +268,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate total returns by branch
-	public int generateTotalReturnByBranch(Date date, String location) {
+	public int generateTotalReturnByBranch(Timestamp date, String location) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(Ret.rid) AS totalReturnOfBranch FROM Return Ret, Rent Ren, Vehicle V WHERE Ret.returnDateTime = ? AND V.location = ? AND Ret.rid = Ren.rid AND Ren.vid = V.vid");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ps.setString(2, location);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
@@ -287,11 +287,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate total earning by a branch
-	public int generateTotalDailyEarningByBranch(Date date, String location) {
+	public int generateTotalDailyEarningByBranch(Timestamp date, String location) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT SUM(Ret.value) AS totalBranchEarning FROM Return Ret, Rent Ren, Vehicle V WHERE Ret.returnDateTime = ? AND V.location = ? AND Ret.rid = Ren.rid AND Ren.vid = V.vid");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ps.setString(2, location);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
@@ -346,7 +346,9 @@ public class DatabaseConnectionHandler {
 			defaultConfNo = 1000000 + rs2.getInt("nums");
 		}
 
+
 		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDateTime, toDateTime, location);
+
 		insert("Reservation", model);
 
 		return model;
@@ -613,7 +615,7 @@ public class DatabaseConnectionHandler {
 			PreparedStatement ps;
 			switch (tableName) {
 				case "Customer":
-					CustomerModel customer = (CustomerModel) Class.forName("CustomerModel").cast(o);
+					CustomerModel customer = (CustomerModel) Class.forName("ca.ubc.cs304.model.CustomerModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?)");
 					ps.setString(1, customer.getdLicense());
 					ps.setString(2, customer.getName());
@@ -626,14 +628,13 @@ public class DatabaseConnectionHandler {
 					ps.close();
 					break;
 				case "Return":
-					ReturnModel returnModel = (ReturnModel) Class.forName("ReturnModel").cast(o);
+					ReturnModel returnModel = (ReturnModel) Class.forName("ca.ubc.cs304.model.ReturnModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO return VALUES (?,?,?,?,?,?)");
 					ps.setInt(1, returnModel.getRid());
-					ps.setDate(2, returnModel.getReturnDate());
-					ps.setTime(3, returnModel.getReturnTime());
-					ps.setInt(4, returnModel.getOdometer());
-					ps.setBoolean(5, returnModel.isFullTank());
-					ps.setDouble(6, returnModel.getValue());
+					ps.setTimestamp(2, returnModel.getReturnDate());
+					ps.setInt(3, returnModel.getOdometer());
+					ps.setBoolean(4, returnModel.isFullTank());
+					ps.setDouble(5, returnModel.getValue());
 
 					ps.executeUpdate();
 					connection.commit();
@@ -641,20 +642,18 @@ public class DatabaseConnectionHandler {
 					ps.close();
 					break;
 				case "Rent":
-					RentModel rent = (RentModel) Class.forName("RentModel").cast(o);
+					RentModel rent = (RentModel) Class.forName("ca.ubc.cs304.model.RentModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO rent VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 					ps.setInt(1, rent.getRid());
 					ps.setInt(2, rent.getVid());
 					ps.setString(3, rent.getdLicense());
-					ps.setDate(4, rent.getFromDate());
-					ps.setTime(5, rent.getFromTime());
-					ps.setDate(6, rent.getToDate());
-					ps.setTime(7, rent.getToTime());
-					ps.setInt(8, rent.getOdometer());
-					ps.setString(9, rent.getCardName());
-					ps.setInt(10, rent.getCardNo());
-					ps.setDate(11, rent.getExpDate());
-					ps.setInt(12, rent.getConfNo());
+					ps.setTimestamp(4, rent.getFromDate());
+					ps.setTimestamp(5, rent.getToDate());
+					ps.setInt(6, rent.getOdometer());
+					ps.setString(7, rent.getCardName());
+					ps.setInt(8, rent.getCardNo());
+					ps.setDate(9, rent.getExpDate());
+					ps.setInt(10, rent.getConfNo());
 
 					ps.executeUpdate();
 					connection.commit();
@@ -662,23 +661,21 @@ public class DatabaseConnectionHandler {
 					ps.close();
 					break;
 				case "Reservation":
-					ReservationModel reservation = (ReservationModel) Class.forName("ReservationModel").cast(o);
+					ReservationModel reservation = (ReservationModel) Class.forName("ca.ubc.cs304.model.ReservationModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO reservation VALUES (?,?,?,?,?,?,?,?)");
 					ps.setInt(1, reservation.getConfNo());
 					ps.setString(2, reservation.getVtname());
 					ps.setString(3, reservation.getdLicense());
-					ps.setDate(4, reservation.getFromDate());
-					ps.setDate(5, reservation.getToDate());
-					ps.setString(7, reservation.getLocation());
-
-
+					ps.setTimestamp(4, reservation.getFromDate());
+					ps.setTimestamp(5, reservation.getToDate());
+					ps.setString(6, reservation.getLocation());
 					ps.executeUpdate();
 					connection.commit();
 
 					ps.close();
 					break;
 				case "Vehicle":
-					VehicleModel vehicle = (VehicleModel) Class.forName("VehicleModel").cast(o);
+					VehicleModel vehicle = (VehicleModel) Class.forName("ca.ubc.cs304.model.VehicleModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO Vehicle VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 					ps.setInt(1, vehicle.getVid());
 					ps.setString(2, vehicle.getVLicense());
@@ -699,7 +696,7 @@ public class DatabaseConnectionHandler {
 					ps.close();
 					break;
 				case "VehicleType":
-					VehicleTypeModel vType = (VehicleTypeModel) Class.forName("VehicleTypeModel").cast(o);
+					VehicleTypeModel vType = (VehicleTypeModel) Class.forName("ca.ubc.cs304.model.VehicleTypeModel").cast(o);
 					ps = connection.prepareStatement("INSERT INTO VehicleType VALUES (?,?,?,?,?,?,?,?)");
 					ps.setString(1, vType.getVtname());
 					ps.setString(2, vType.getFeatures());

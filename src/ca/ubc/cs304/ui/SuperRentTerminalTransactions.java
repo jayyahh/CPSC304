@@ -103,7 +103,7 @@ public class SuperRentTerminalTransactions {
         int endMin = selectMin();
         Timestamp endDateTime = convertToSqlTimeStamp(endDate,endHour,endMin);
         String dLicense = enterAny("driver's license");
-        if (isEndTimeLater(startDate, startHour, startMin, endDate, endHour, endMin)){
+        if (isEndTimeLater(startDateTime, endDateTime)){
             delegate.reserveVehicle(carType, dLicense, startDateTime, endDateTime , location);
         } else {
             System.out.println("End time must be later than start time, quitting program...");
@@ -171,7 +171,7 @@ public class SuperRentTerminalTransactions {
                     case 3:
                         Date date3 = selectDate("report");
                         Timestamp d3 = convertToSqlTimeStamp(date3,12,30);
-                        delegate.generateReturnsReport(date3);
+                        delegate.generateReturnsReport(d3);
                         break;
                     case 4:
                         Date date4 = selectDate("report");
@@ -190,36 +190,8 @@ public class SuperRentTerminalTransactions {
         }
     }
 
-    private boolean isEndTimeLater(Date startDate, int startHour, int startMin, Date endDate, int endHour, int endMin) {
-        if (startDate.getYear() > endDate.getYear()) {
-            return false;
-        } else if (startDate.getYear() == endDate.getYear()) {
-            if (startDate.getMonth() > endDate.getMonth()) {
-                return false;
-            } else if (startDate.getMonth() == endDate.getMonth()) {
-                if (startDate.getDay() > endDate.getDay()) {
-                    return false;
-                } else if (startDate.getDay() == endDate.getDay()) {
-                    if (startHour > endHour) {
-                        return false;
-                    } else if (startHour == endHour) {
-                        if (startMin >= endMin) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    } else {
-                        return true;
-                    }
-                } else {
-                    return true;
-                }
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }
+    private boolean isEndTimeLater(Timestamp start, Timestamp end) {
+        return end.after(start);
     }
 
     private boolean selectBool() {
