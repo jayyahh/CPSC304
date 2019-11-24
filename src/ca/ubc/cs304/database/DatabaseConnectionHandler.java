@@ -228,8 +228,6 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-
-
 	public ReservationModel makeReservation (String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location) throws SQLException {
 
 		int confNo = getConfNo();
@@ -244,10 +242,7 @@ public class DatabaseConnectionHandler {
 		ReservationModel model = makeReservation(vtname, dLicense, fromDate, fromTime, toDate, toTime,location);
 		RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), dLicense, cardName, cardNo, expDate);
 		return rentModel;
-
 	}
-
-
 
 	public RentModel rentAVehicleWithReservation(int confNo, String dLicense,  String cardName, int cardNo, Date expDate) throws SQLException {
 		try{
@@ -743,7 +738,6 @@ public class DatabaseConnectionHandler {
 
 		return (Object[]) result.toArray(new Object[result.size()]);
 	}
-
 
 	public ArrayList<String> viewAllTables() {
 		ArrayList<String> result = new ArrayList<String>();
