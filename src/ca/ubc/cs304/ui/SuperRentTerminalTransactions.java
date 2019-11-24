@@ -82,8 +82,9 @@ public class SuperRentTerminalTransactions {
         int endHour = selectHour();
         int endMin = selectMin();
         Time endTime = new Time (endHour, endMin, 0);
+        String dLicense = selectAny("driver's license");
         if (isEndTimeLater(startDate, startHour, startMin, endDate, endHour, endMin)){
-            delegate.showAvailableVehicles(carType, location, startDate, startTime, endDate, endTime);
+            delegate.reserveVehicle(carType, dLicense, location, startDate, startTime, endDate, endTime);
         } else {
             System.out.println("End time must be later than start time, quitting program");
             handleQuitOption();
@@ -120,6 +121,15 @@ public class SuperRentTerminalTransactions {
         } else {
             return true;
         }
+    }
+
+    public String selectAny(String what) {
+        String choice = "";
+        while (choice == ""){
+            System.out.println("Please enter your " + what + " : ");
+            choice = readLine();
+        }
+        return choice;
     }
 
     private int selectHour() {
@@ -289,7 +299,7 @@ public class SuperRentTerminalTransactions {
     }
 
     private void rentVehicle() {
-        delegate.rentVehicle();
+        //delegate.rentVehicle();
     }
 
     private void returnVehicle() {

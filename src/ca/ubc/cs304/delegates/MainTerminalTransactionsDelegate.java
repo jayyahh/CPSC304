@@ -1,5 +1,7 @@
 package ca.ubc.cs304.delegates;
 
+import ca.ubc.cs304.model.VehicleModel;
+
 import java.sql.Date;
 import java.sql.Time;
 
@@ -14,7 +16,8 @@ import java.sql.Time;
  */
 public interface MainTerminalTransactionsDelegate {
     public void showAvailableVehicles(String carType, String location, Date startDate, Time startTime, Date endDate, Time endTime);
-    public void rentVehicle();
+    public void rentVehicle(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location);
+    public void reserveVehicle(String carType, String dLicense, String location, Date startDate, Time startTime, Date endDate, Time endTime);
     public void returnVehicle();
     public void generateRentalsReport(Date date);
     public void generateRentalsBranchReport(Date date, String branch);

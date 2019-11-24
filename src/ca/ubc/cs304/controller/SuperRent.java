@@ -7,6 +7,9 @@ import ca.ubc.cs304.model.*;
 import ca.ubc.cs304.ui.LoginWindow;
 import ca.ubc.cs304.ui.SuperRentTerminalTransactions;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +21,7 @@ import java.sql.Time;
 public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsDelegate {
     private DatabaseConnectionHandler dbHandler = null;
     private LoginWindow loginWindow = null;
+    private static SuperRentTerminalTransactions transaction = new SuperRentTerminalTransactions();
 
     public SuperRent() {
         dbHandler = new DatabaseConnectionHandler();
@@ -40,7 +44,6 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
             // Once connected, remove login window and start text transaction flow
             loginWindow.dispose();
 
-            SuperRentTerminalTransactions transaction = new SuperRentTerminalTransactions();
             transaction.showMainMenu(this);
         } else {
             loginWindow.handleLoginFailed();
@@ -54,11 +57,33 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
     }
 
     public void showAvailableVehicles(String carType, String location, Date startDate, Time startTime, Date endDate, Time endTime) {
-
+        ViewAvailableVehicles(location, startDate, endDate, carType);
     }
 
-    public void rentVehicle() {
+    public void rentVehicle(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location)
+    {
+        RentModel model;
+        try{
+            if (confNo == 0) {
+                model = dbHandler.rentAVehicleWithoutReservation(vtname, dLicense, fromDate, fromTime, toDate, toTime, name, cardName, cardNo, expDate, location);
+            }
+            else {
+                model = dbHandler.rentAVehicleWithReservation(confNo, dLicense, cardName, cardNo, expDate);
+            }
+            //print out receipt
+            System.out.print("Rental completed!");
+            System.out.println("ConfirmationNo: " +  model.getConfNo());
+            System.out.println("Rental Period: " +  model.getFromDate() + "to" + model.getToDate());
+            System.out.println("Location: " + model.getLocation());
 
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void reserveVehicle(String carType, String dLicense, String location, Date startDate, Time startTime, Date endDate, Time endTime) {
+        ReserveVehicle(carType, dLicense, startDate, startTime, endDate, endTime, location);
     }
 
     public void returnVehicle() {
@@ -93,35 +118,16 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         // what do we do with the data?
     }
 
-
-    public void RentVehicle(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location)
-    {
-        RentModel model;
-        try{
-            if (confNo == 0) {
-                model = dbHandler.rentAVehicleWithoutReservation(vtname, dLicense, fromDate, fromTime, toDate, toTime, name, cardName, cardNo, expDate, location);
-            }
-            else {
-                model = dbHandler.rentAVehicleWithReservation(confNo, dLicense, cardName, cardNo, expDate);
-            }
-            //print out receipt
-            System.out.print("Rental completed!");
-            System.out.println("ConfirmationNo: " +  model.getConfNo());
-            System.out.println("Rental Period: " +  model.getFromDate() + "to" + model.getToDate());
-            System.out.println("Location: " + model.getLocation());
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
     public void ReserveVehicle(String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location){
         ReservationModel model;
         try {
             if (!dbHandler.checkCustomer(dLicense)){
-                //use system to get customer info
-                //call create customer on this
+                System.out.println("For first time renters, please enter your information.");
+                String license = transaction.selectAny("driver's license");
+                String name = transaction.selectAny("name");
+                String address = transaction.selectAny("address");
+                String phone = transaction.selectAny("phone");
+                dbHandler.createCustomer(license, name, address, phone);
             }
 
             if(dbHandler.getAvailableCarInfo(location,fromDate,toDate,vtname).length == 0){
@@ -190,12 +196,10 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
                 System.out.printf("%-15.15s", model.getCity());
                 System.out.printf("%-15.15s", model.getFuelType());
 
-
                 System.out.println();
             }
         }
     }
-
 
     /**
      * TerminalTransactionsDelegate Implementation
