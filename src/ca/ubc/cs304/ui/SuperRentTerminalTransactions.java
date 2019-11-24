@@ -94,11 +94,11 @@ public class SuperRentTerminalTransactions {
         Date startDate = selectDate("start");
         int startHour = selectHour();
         int startMin = selectMin();
-        Time startTime = new Time (startHour, startMin, 0);
+        Time startTime = convertToSqlTime(startHour,startMin);
         Date endDate = selectDate("end");
         int endHour = selectHour();
         int endMin = selectMin();
-        Time endTime = new Time (endHour, endMin, 0);
+        Time endTime = convertToSqlTime(endHour,endMin);
         String dLicense = enterAny("driver's license");
         if (isEndTimeLater(startDate, startHour, startMin, endDate, endHour, endMin)){
             delegate.reserveVehicle(carType, dLicense, startDate, startTime, endDate, endTime, location);
@@ -116,11 +116,11 @@ public class SuperRentTerminalTransactions {
         Date startDate = selectDate("start");
         int startHour = selectHour();
         int startMin = selectMin();
-        Time startTime = new Time(startHour, startMin, 0);
+        Time startTime =convertToSqlTime(startHour,startMin);
         Date endDate = selectDate("end");
         int endHour = selectHour();
         int endMin = selectMin();
-        Time endTime = new Time(endHour, endMin, 0);
+        Time endTime = convertToSqlTime(endHour,endMin);
         String name = enterAny("name");
         String cardName = enterAny("name on card");
         int cardNo = Integer.parseInt(enterAny("card number"));
@@ -133,7 +133,7 @@ public class SuperRentTerminalTransactions {
         Date returnDate = selectDate("return");
         int hour = selectHour();
         int min = selectMin();
-        Time time = new Time (hour, min, 0);
+        Time time = convertToSqlTime(hour,min);
         int odometer = Integer.parseInt(enterAny("odometer"));
         boolean isTankFull = selectBool();
         delegate.returnVehicle(rid, returnDate, time, odometer, isTankFull);
@@ -450,6 +450,10 @@ public class SuperRentTerminalTransactions {
             }
         }
         return input;
+    }
+    private Time convertToSqlTime(int hour, int minute){
+        String time = hour+":"+minute+":"+"00";
+        return Time.valueOf(time);
     }
 
     private String readLine() {
