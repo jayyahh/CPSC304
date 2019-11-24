@@ -340,9 +340,15 @@ public class DatabaseConnectionHandler {
 
 	public ReservationModel makeReservation (String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location) throws SQLException {
 
-		int confNo = getConfNo();
+		int defaultConfNo= 1000000;
+		Statement stmt = connection.createStatement();
+		ResultSet rs2 = stmt.executeQuery("select count(distinct confNo)  AS nums from reservation");
 
-		ReservationModel model = new ReservationModel(confNo, vtname, dLicense, fromDate, fromTime, toDate, toTime, location);
+		while(rs2.next()){
+			defaultConfNo = 1000000 + rs2.getInt("nums");
+		}
+
+		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDate, fromTime, toDate, toTime, location);
 		insert("Reservation", model);
 
 		return model;
@@ -380,7 +386,15 @@ public class DatabaseConnectionHandler {
 			int vid = carRs.getInt("vid");
 			int odometer = carRs.getInt("odometer");
 
-			RentModel model = new RentModel(getRId(), vid, dLicense, fromDate, fromTime, toDate, toTime, location, odometer, cardName, cardNo, expDate, confNo);
+            int defaultRid = 1;
+			Statement stmt = connection.createStatement();
+			ResultSet rs2 = stmt.executeQuery("select count(distinct rid)  AS rids from rent");
+
+			while(rs2.next()){
+			defaultRid = 1 + rs2.getInt("rids");
+			}
+
+			RentModel model = new RentModel(defaultRid, vid, dLicense, fromDate, fromTime, toDate, toTime, location, odometer, cardName, cardNo, expDate, confNo);
 			insert("Rent", model);
 
 			PreparedStatement vtType = connection.prepareStatement("update VehicleType set numAvail = numAvail - 1 where vtname = ?");
@@ -411,7 +425,7 @@ public class DatabaseConnectionHandler {
 		ArrayList<VehicleModel> result = new ArrayList<VehicleModel>();
 		//restrict that dates are only forward on the front end
 		try {
-			PreparedStatement ps = connection.prepareStatement("SELECT * FROM Vehicle WHERE status = ? and location = ? and (vtname = ? or (? IS NULL or ? = '' order by make)");
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM Vehicle WHERE status = ? and location = ? and (vtname = ? or (? IS NULL or ? = '')) order by make");
 			ps.setString(1, "Available");
 			ps.setString(2, location);
 			ps.setString(3, vtName);
@@ -419,6 +433,16 @@ public class DatabaseConnectionHandler {
 			ps.setString(5, vtName);
 
 			ResultSet rs = ps.executeQuery();
+
+    		ResultSetMetaData rsmd = rs.getMetaData();
+
+    		System.out.println(" ");
+
+    		// display column names;
+    		for (int i = 0; i < rsmd.getColumnCount(); i++) {
+    			// get column name and print it
+    			System.out.printf("%-15s", rsmd.getColumnName(i + 1));
+    		}
 
 			while(rs.next()) {
 				VehicleModel model = new VehicleModel(rs.getInt("vid"),
@@ -591,7 +615,7 @@ public class DatabaseConnectionHandler {
 	}
 	/** Dynamically constructs an insert statement based on given object*/
 	public void insert(String tableName, Object o) {
-
+		System.out.println(tableName + o);
 		try {
 			PreparedStatement ps;
 			switch (tableName) {
@@ -710,6 +734,7 @@ public class DatabaseConnectionHandler {
 		}
 		catch (ClassNotFoundException e) {
 			System.out.println("The object type given was not found.");
+			System.out.println(e.getMessage());
 		}
 	}
 
