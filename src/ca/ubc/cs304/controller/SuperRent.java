@@ -41,7 +41,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
     public void login(String username, String password) {
         boolean didConnect = dbHandler.login(username, password);
 
-        if (!didConnect) {
+        if (didConnect) {
             // Once connected, remove login window and start text transaction flow
             loginWindow.dispose();
 

@@ -275,7 +275,8 @@ public class SuperRentTerminalTransactions {
         int year = selectYear();
         int month = selectMonth();
         int day = selectDay(month);
-        return new Date(year, month, day);
+        String date = year + "-" + month + "-" + day;
+        return Date.valueOf(date);
     }
 
     private int selectYear() {
