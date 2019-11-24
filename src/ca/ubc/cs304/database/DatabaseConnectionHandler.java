@@ -409,7 +409,7 @@ public class DatabaseConnectionHandler {
 		ArrayList<VehicleModel> result = new ArrayList<VehicleModel>();
 		//restrict that dates are only forward on the front end
 		try {
-			PreparedStatement ps = connection.prepareStatement("SELECT * FROM Vehicle WHERE status = ? and location = ? and (vtname = ? or (? IS NULL or ? = '' order by make)");
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM Vehicle WHERE status = ? and location = ? and (vtname = ? or (? IS NULL or ? = '')) order by make");
 			ps.setString(1, "Available");
 			ps.setString(2, location);
 			ps.setString(3, vtName);
@@ -589,7 +589,6 @@ public class DatabaseConnectionHandler {
 	}
 	/** Dynamically constructs an insert statement based on given object*/
 	public void insert(String tableName, Object o) {
-
 		try {
 			PreparedStatement ps;
 			switch (tableName) {
@@ -598,6 +597,7 @@ public class DatabaseConnectionHandler {
 					ps = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?)");
 					ps.setString(1, customer.getdLicense());
 					ps.setString(2, customer.getName());
+					System.out.println("IT COMES HERE NIGGA");
 					ps.setString(3, customer.getAddress());
 					ps.setString(4, customer.getCellPhone());
 
