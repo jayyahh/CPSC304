@@ -672,10 +672,8 @@ public class DatabaseConnectionHandler {
 					ps.setString(2, reservation.getVtname());
 					ps.setString(3, reservation.getdLicense());
 					ps.setDate(4, reservation.getFromDate());
-					ps.setTime(5, reservation.getFromTime());
-					ps.setDate(6, reservation.getToDate());
-					ps.setTime(7, reservation.getToTime());
-					ps.setString(8, reservation.getLocation());
+					ps.setDate(5, reservation.getToDate());
+					ps.setString(7, reservation.getLocation());
 
 
 					ps.executeUpdate();

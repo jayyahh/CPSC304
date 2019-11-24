@@ -3,20 +3,19 @@ package ca.ubc.cs304.model;
 import com.sun.jdi.Value;
 import java.sql.Time;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class ReturnModel {
     private final int rid;
-    private final Date returnDate;
-    private final Time returnTime;
+    private final Timestamp returnDate;
     private int odometer;
     private boolean fullTank;
     private double value;
     public RentalValue valueDetails;
 
-    public ReturnModel(int rid, Date returnDate, Time returnTime, int odometer, boolean fullTank, double value){
+    public ReturnModel(int rid, Timestamp returnDate, int odometer, boolean fullTank, double value){
         this.rid = rid;
         this.returnDate = returnDate;
-        this.returnTime = returnTime;
         this.odometer = odometer;
         this.fullTank = fullTank;
         this.value = value;
@@ -26,12 +25,8 @@ public class ReturnModel {
         return rid;
     }
 
-    public Date getReturnDate() {
+    public Timestamp getReturnDate() {
         return returnDate;
-    }
-
-    public Time getReturnTime() {
-        return returnTime;
     }
 
     public int getOdometer() {
