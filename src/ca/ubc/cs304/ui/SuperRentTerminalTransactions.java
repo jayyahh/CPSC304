@@ -35,12 +35,13 @@ public class SuperRentTerminalTransactions {
 
         while (choice != 5) {
             System.out.println();
-            System.out.println("1. View available cars to make a reservation");
-            System.out.println("2. Rent a vehicle");
-            System.out.println("3. Return a vehicle");
-            System.out.println("4. Generate a daily report");
-            System.out.println("5. Quit");
-            System.out.print("Please choose one of the above 5 options: ");
+            System.out.println("1. View available cars");
+            System.out.println("2. Make a reservation");
+            System.out.println("3. Rent a vehicle");
+            System.out.println("4. Return a vehicle");
+            System.out.println("5. Generate a daily report");
+            System.out.println("6. Quit");
+            System.out.print("Please choose one of the above 6 options: ");
 
             choice = readInteger(false);
 
@@ -49,18 +50,20 @@ public class SuperRentTerminalTransactions {
             if (choice != INVALID_INPUT) {
                 switch (choice) {
                     case 1:
+                        showAvailableVehicles();
+                    case 2:
                         makeReservation();
                         break;
-                    case 2:
+                    case 3:
                         rentVehicle();
                         break;
-                    case 3:
+                    case 4:
                         returnVehicle();
                         break;
-                    case 4:
+                    case 5:
                         generateDailyReport();
                         break;
-                    case 5:
+                    case 6:
                         handleQuitOption();
                         break;
                     default:
@@ -68,6 +71,19 @@ public class SuperRentTerminalTransactions {
                         break;
                 }
             }
+        }
+    }
+
+    private void showAvailableVehicles() {
+        String carType = selectCarType();
+        String location = selectLocation();
+        Date startDate = selectDate("start");
+        Date endDate = selectDate("end");
+        if (endDate.compareTo(startDate) > 0) {
+            delegate.showAvailableVehicles(location, startDate, endDate, carType);
+        } else {
+            System.out.println("End date must be later than start date, quitting program...");
+            handleQuitOption();
         }
     }
 
@@ -82,12 +98,86 @@ public class SuperRentTerminalTransactions {
         int endHour = selectHour();
         int endMin = selectMin();
         Time endTime = new Time (endHour, endMin, 0);
-        String dLicense = selectAny("driver's license");
+        String dLicense = enterAny("driver's license");
         if (isEndTimeLater(startDate, startHour, startMin, endDate, endHour, endMin)){
-            delegate.reserveVehicle(carType, dLicense, location, startDate, startTime, endDate, endTime);
+            delegate.reserveVehicle(carType, dLicense, startDate, startTime, endDate, endTime, location);
         } else {
-            System.out.println("End time must be later than start time, quitting program");
+            System.out.println("End time must be later than start time, quitting program...");
             handleQuitOption();
+        }
+    }
+
+    private void rentVehicle() {
+        int confNo = Integer.parseInt(enterAny("confirmation number"));
+        String carType = selectCarType();
+        String location = selectLocation();
+        String dLicense = enterAny("driver's license");
+        Date startDate = selectDate("start");
+        int startHour = selectHour();
+        int startMin = selectMin();
+        Time startTime = new Time(startHour, startMin, 0);
+        Date endDate = selectDate("end");
+        int endHour = selectHour();
+        int endMin = selectMin();
+        Time endTime = new Time(endHour, endMin, 0);
+        String name = enterAny("name");
+        String cardName = enterAny("name on card");
+        int cardNo = Integer.parseInt(enterAny("card number"));
+        Date expDate = selectDate("card expiration date");
+        delegate.rentVehicle(confNo, carType, dLicense, startDate, startTime, endDate, endTime, name, cardName, cardNo, expDate, location);
+    }
+
+    private void returnVehicle() {
+        int rid = Integer.parseInt(enterAny("rid"));
+        Date returnDate = selectDate("return");
+        int hour = selectHour();
+        int min = selectMin();
+        Time time = new Time (hour, min, 0);
+        int odometer = Integer.parseInt(enterAny("odometer"));
+        boolean isTankFull = selectBool();
+        delegate.returnVehicle(rid, returnDate, time, odometer, isTankFull);
+    }
+
+    private void generateDailyReport() {
+        int choice = INVALID_INPUT;
+        while (choice != 5) {
+            System.out.println();
+            System.out.println("1. Report of all daily rentals");
+            System.out.println("2. Report of daily rentals by branch");
+            System.out.println("3. Report of all daily returns");
+            System.out.println("4. Report of daily returns by branch");
+            System.out.println("5. Quit");
+            System.out.print("Please choose one of the above 5 options: ");
+            choice = readInteger(false);
+            System.out.println(" ");
+            if (choice != INVALID_INPUT) {
+                switch (choice) {
+                    case 1:
+                        Date date1 = selectDate("report");
+                        delegate.generateRentalsReport(date1);
+                        break;
+                    case 2:
+                        Date date2 = selectDate("report");
+                        String branch1 = selectLocation();
+                        delegate.generateRentalsBranchReport(date2, branch1);
+                        break;
+                    case 3:
+                        Date date3 = selectDate("report");
+                        delegate.generateReturnsReport(date3);
+                        break;
+                    case 4:
+                        Date date4 = selectDate("report");
+                        String branch2 = selectLocation();
+                        delegate.generateReturnsBranchReport(date4, branch2);
+                        break;
+                    case 5:
+                        handleQuitOption();
+                        break;
+                    default:
+                        System.out.println(WARNING_TAG + " The number that you entered was not a valid option.");
+                        break;
+                }
+            }
         }
     }
 
@@ -123,7 +213,37 @@ public class SuperRentTerminalTransactions {
         }
     }
 
-    public String selectAny(String what) {
+    private boolean selectBool() {
+        boolean ret = false;
+        int choice = INVALID_INPUT;
+        System.out.println();
+        System.out.println("Please select true or false: ");
+        System.out.println("1. True");
+        System.out.println("2. False");
+        System.out.println("3. Quit");
+        while (choice < 0 || choice > 3) {
+            choice = readInteger(false);
+            if (choice != INVALID_INPUT) {
+                switch (choice) {
+                    case 1:
+                        ret = true;
+                        break;
+                    case 2:
+                        ret = false;
+                        break;
+                    case 3:
+                        handleQuitOption();
+                        break;
+                    default:
+                        System.out.println(WARNING_TAG + " The number that you entered was not a valid option.");
+                        break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    public String enterAny(String what) {
         String choice = "";
         while (choice == ""){
             System.out.println("Please enter your " + what + " : ");
@@ -298,58 +418,7 @@ public class SuperRentTerminalTransactions {
         return carType;
     }
 
-    private void rentVehicle() {
-        //delegate.rentVehicle();
-    }
-
-    private void returnVehicle() {
-        delegate.returnVehicle();
-    }
-
-    private void generateDailyReport() {
-        int choice = INVALID_INPUT;
-        while (choice != 5) {
-            System.out.println();
-            System.out.println("1. Report of all daily rentals");
-            System.out.println("2. Report of daily rentals by branch");
-            System.out.println("3. Report of all daily returns");
-            System.out.println("4. Report of daily returns by branch");
-            System.out.println("5. Quit");
-            System.out.print("Please choose one of the above 5 options: ");
-            choice = readInteger(false);
-            System.out.println(" ");
-            if (choice != INVALID_INPUT) {
-                switch (choice) {
-                    case 1:
-                        Date date1 = selectDate("report");
-                        delegate.generateRentalsReport(date1);
-                        break;
-                    case 2:
-                        Date date2 = selectDate("report");
-                        String branch1 = selectLocation();
-                        delegate.generateRentalsBranchReport(date2, branch1);
-                        break;
-                    case 3:
-                        Date date3 = selectDate("report");
-                        delegate.generateReturnsReport(date3);
-                        break;
-                    case 4:
-                        Date date4 = selectDate("report");
-                        String branch2 = selectLocation();
-                        delegate.generateReturnsBranchReport(date4, branch2);
-                        break;
-                    case 5:
-                        handleQuitOption();
-                        break;
-                    default:
-                        System.out.println(WARNING_TAG + " The number that you entered was not a valid option.");
-                        break;
-                }
-            }
-        }
-    }
-
-    private void handleQuitOption() {
+    public void handleQuitOption() {
         System.out.println("Good Bye!");
 
         if (bufferedReader != null) {
