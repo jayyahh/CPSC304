@@ -2,8 +2,10 @@ package ca.ubc.cs304.database;
 
 import ca.ubc.cs304.model.*;
 import oracle.jdbc.driver.OracleDriver;
+import oracle.jdbc.proxy.annotation.Pre;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class ConnectionHandler {
     private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
@@ -219,7 +221,28 @@ public class ConnectionHandler {
 
     }
 
+    /*public Object[] viewTable(String tableName) {
+        ArrayList result = new ArrayList();
+        String query = "SELECT * FROM " + tableName;
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
 
+            while(rs.next()) {
+                Object o = new BranchModel(rs.getString("branch_addr"), rs.getString("branch_city"), rs.getInt("branch_id"), rs.getString("branch_name"), rs.getInt("branch_phone"));
+                result.add(model);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException var5) {
+            System.out.println("[EXCEPTION] " + var5.getMessage());
+        }
+
+        return (BranchModel[])result.toArray(new BranchModel[result.size()]);
+
+    }
+*/
 
     public boolean login(String username, String password) {
         try {
