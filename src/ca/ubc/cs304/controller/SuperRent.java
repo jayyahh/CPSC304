@@ -61,6 +61,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         VehicleModel[] result = dbHandler.getAvailableCarInfo(location, startDate, endDate, carType);
         if (result.length == 0){
             System.out.println("No available vehicles for selected dates!");
+            transaction.showMainMenu(this);
         }else{
             System.out.println("Number of available vehicles: " + result.length);
 
@@ -122,7 +123,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
 
             if(dbHandler.getAvailableCarInfo(location,startDate,endDate,carType).length == 0){
                 System.out.print("No cars available for the selected inputs! Please try again");
-                //use system to tell user to try again
+                transaction.showMainMenu(this);
             }
             model = dbHandler.makeReservation(carType, dLicense, startDate, startTime, endDate, endTime, location);
             System.out.print("Reservation completed!");

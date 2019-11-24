@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.sql.Date;
 import java.sql.Time;
 
+import ca.ubc.cs304.controller.SuperRent;
 import ca.ubc.cs304.delegates.MainTerminalTransactionsDelegate;
 
 
