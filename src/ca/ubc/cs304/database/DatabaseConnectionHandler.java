@@ -105,14 +105,13 @@ public class DatabaseConnectionHandler {
 	public DailyRentalReportModel[] generateRentalsReportByBranch(Date date, String branch) {
 		ArrayList<DailyRentalReportModel> result = new ArrayList<DailyRentalReportModel>();
 		try {
-			PreparedStatement ps = connection.prepareStatement("SELECT V.location, V.vtname, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND R.toDateTime >= ? AND V.location = ? GROUP BY V.vtname");
+			PreparedStatement ps = connection.prepareStatement("SELECT V.vtname, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND R.toDateTime >= ? AND V.location = ? GROUP BY V.vtname");
 			ps.setDate(1, date);
 			ps.setDate(2, date);
 			ps.setString(3, branch);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyRentalReportModel report = new DailyRentalReportModel();
-				report.branch = rs.getString("location");
 				report.vehicleType = rs.getString("vtname");
 				report.typeCount = rs.getInt("typeCount");
 				result.add(report);
@@ -168,7 +167,7 @@ public class DatabaseConnectionHandler {
 	public DailyReturnReportModel[] generateReturnsReport(Date date) {
 		ArrayList<DailyReturnReportModel> result = new ArrayList<DailyReturnReportModel>();
 		try {
-			PreparedStatement ps = connection.prepareStatement("SELECT V.location, V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rental Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? GROUP BY V.location, V.vtname");
+			PreparedStatement ps = connection.prepareStatement("SELECT V.location, V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? GROUP BY V.location, V.vtname");
 			ps.setDate(1, date);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -191,7 +190,7 @@ public class DatabaseConnectionHandler {
 	public DailyReturnReportPerBranchModel[] generateReturnsReportPerBranch(Date date) {
 		ArrayList<DailyReturnReportPerBranchModel> result = new ArrayList<DailyReturnReportPerBranchModel>();
 		try {
-			PreparedStatement ps = connection.prepareStatement("SELECT V.location, COUNT(Ret.rid) AS totalReturnCount, SUM(Ret.value) AS totalBranchValue FROM Rental Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? GROUP BY V.location");
+			PreparedStatement ps = connection.prepareStatement("SELECT V.location, COUNT(Ret.rid) AS totalReturnCount, SUM(Ret.value) AS totalBranchValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? GROUP BY V.location");
 			ps.setDate(1, date);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -249,13 +248,12 @@ public class DatabaseConnectionHandler {
 	public DailyReturnReportModel[] generateReturnsReportByBranch(Date date, String branch) {
 		ArrayList<DailyReturnReportModel> result = new ArrayList<DailyReturnReportModel>();
 		try {
-			PreparedStatement ps = connection.prepareStatement("SELECT V.location, V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rental Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? AND V.location = ? GROUP BY V.vtname");
+			PreparedStatement ps = connection.prepareStatement("SELECT V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? AND V.location = ? GROUP BY V.vtname");
 			ps.setDate(1, date);
 			ps.setString(2, branch);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyReturnReportModel report = new DailyReturnReportModel();
-				report.branch = rs.getString("location");
 				report.vehicleType = rs.getString("vtname");
 				report.typeCount = rs.getInt("typeCount");
 				report.value = rs.getInt("totalTypeValue");

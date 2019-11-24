@@ -151,7 +151,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         int newRentals = dbHandler.generateTotalNewRentalbyBranch(date, branch);
         int totalOfBranch = dbHandler.generateTotalRentalbyBranch(date, branch);
         for (int i = 0; i < dailyRentalReportModels.length; i++) {
-            System.out.println("Branch: " + dailyRentalReportModels[i].branch + ", Vehicle Type: " + dailyRentalReportModels[i].vehicleType + ", Total of such Type: " + dailyRentalReportModels[i].typeCount);
+            System.out.println("Branch: " + branch + ", Vehicle Type: " + dailyRentalReportModels[i].vehicleType + ", Total of such Type: " + dailyRentalReportModels[i].typeCount);
         }
         System.out.println("Total New Rentals on " + date + " at branch " + branch + " : " + newRentals);
         System.out.println("Total Rentals of Branch: " + totalOfBranch);
@@ -177,7 +177,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         int totalReturnsOfBranch = dbHandler.generateTotalReturnByBranch(date, branch);
         int totalEarningOfBranch = dbHandler.generateTotalDailyEarningByBranch(date, branch);
         for (int i = 0; i< dailyReturnReportModels.length; i++) {
-            System.out.println("Branch: " + dailyReturnReportModels[i].branch + ", Vehicle Type: " + dailyReturnReportModels[i].vehicleType + ", Total of such Type: " + dailyReturnReportModels[i].typeCount + ", Total Earning from such Type: " + dailyReturnReportModels[i].value);
+            System.out.println("Branch: " + branch + ", Vehicle Type: " + dailyReturnReportModels[i].vehicleType + ", Total of such Type: " + dailyReturnReportModels[i].typeCount + ", Total Earning from such Type: " + dailyReturnReportModels[i].value);
         }
         System.out.println("Total Returns on " + date + " of branch " + branch + " : " + totalReturnsOfBranch);
         System.out.println("Total Earning of branch " + branch + " on " + date + " : " + totalEarningOfBranch);
