@@ -128,7 +128,8 @@ public class SuperRentTerminalTransactions {
         String cardName = enterAny("name on card");
         int cardNo = Integer.parseInt(enterAny("card number"));
         Date expDate = selectDate("card expiration date");
-        delegate.rentVehicle(confNo, carType, dLicense,startDateTime,endDateTime, name, cardName, cardNo, expDate, location);
+        Timestamp exp = convertToSqlTimeStamp(expDate,12,30);
+        delegate.rentVehicle(confNo, carType, dLicense,startDateTime,endDateTime, name, cardName, cardNo, exp, location);
     }
 
     private void returnVehicle() {

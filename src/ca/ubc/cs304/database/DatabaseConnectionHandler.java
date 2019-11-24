@@ -336,7 +336,7 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public ReservationModel makeReservation (String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location) throws SQLException {
+	public ReservationModel makeReservation (String vtname, String dLicense, Timestamp fromDateTime,Timestamp toDateTime, String location) throws SQLException {
 
 		int defaultConfNo= 1000000;
 		Statement stmt = connection.createStatement();
@@ -346,19 +346,21 @@ public class DatabaseConnectionHandler {
 			defaultConfNo = 1000000 + rs2.getInt("nums");
 		}
 
-		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDate, toDate, location);
+
+		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDateTime, toDateTime, location);
+
 		insert("Reservation", model);
 
 		return model;
 	}
 
-	public RentModel rentAVehicleWithoutReservation(String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location) throws SQLException {
-		ReservationModel model = makeReservation(vtname, dLicense, fromDate, fromTime, toDate, toTime,location);
+	public RentModel rentAVehicleWithoutReservation(String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location) throws SQLException {
+		ReservationModel model = makeReservation(vtname, dLicense, fromDateTime, toDateTime,location);
 		RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), dLicense, cardName, cardNo, expDate);
 		return rentModel;
 	}
 
-	public RentModel rentAVehicleWithReservation(int confNo, String dLicense,  String cardName, int cardNo, Date expDate) throws SQLException {
+	public RentModel rentAVehicleWithReservation(int confNo, String dLicense,  String cardName, int cardNo, Timestamp expDate) throws SQLException {
 		try{
 			PreparedStatement reso = connection.prepareStatement("select * from reservation where confNo = ?");
 			reso.setInt (1, confNo);
@@ -370,10 +372,8 @@ public class DatabaseConnectionHandler {
 			}
 
 			String vtName = rs.getString("vtname");
-			Time fromTime = rs.getTime("fromTime");
-			Date fromDate = rs.getDate("fromDate");
-			Time toTime = rs.getTime("toTime");
-			Date toDate = rs.getDate("toDate");
+			Timestamp fromDateTime = rs.getTimestamp("fromDateTime");
+			Timestamp toDateTime = rs.getTimestamp("toDateTime");
 			String location = rs.getString("location");
 
 			PreparedStatement car = connection.prepareStatement("select * from vehicle where location = ? and vtname = ? and status = ?");
@@ -392,7 +392,7 @@ public class DatabaseConnectionHandler {
 			defaultRid = 1 + rs2.getInt("rids");
 			}
 
-			RentModel model = new RentModel(defaultRid, vid, dLicense, fromDate, fromTime, toDate, toTime, location, odometer, cardName, cardNo, expDate, confNo);
+			RentModel model = new RentModel(defaultRid, vid, dLicense, fromDateTime, toDateTime, location, odometer, cardName, cardNo, expDate, confNo);
 			insert("Rent", model);
 
 			PreparedStatement vtType = connection.prepareStatement("update VehicleType set numAvail = numAvail - 1 where vtname = ?");
@@ -419,9 +419,8 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public VehicleModel[] getAvailableCarInfo(String location, Date fromDate, Date toDate, String vtName) {
+	public VehicleModel[] getAvailableCarInfo(String location, Timestamp fromDate, Timestamp toDate, String vtName) {
 		ArrayList<VehicleModel> result = new ArrayList<VehicleModel>();
-		//restrict that dates are only forward on the front end
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT * FROM Vehicle WHERE status = ? and location = ? and (vtname = ? or (? IS NULL or ? = '')) order by make");
 			ps.setString(1, "Available");
@@ -480,11 +479,10 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public ReturnModel returnVehicle(int rid, Date returnDate, Time returnTime, int odometerReading, boolean isTankFull, ResultSet rs) throws SQLException {
+	public ReturnModel returnVehicle(int rid, Timestamp returnDateTime, int odometerReading, boolean isTankFull, ResultSet rs) throws SQLException {
 		try{
 
-			Date fromDate = rs.getDate("fromDate");
-			Time fromTime = rs.getTime("fromTime");
+			Timestamp fromDateTime = rs.getTimestamp("fromDateTime");
 			int beginningOdometer = rs.getInt("odometer");
 			String vtName = rs.getString("vtname");
 			int vid = rs.getInt("vid");
@@ -497,8 +495,8 @@ public class DatabaseConnectionHandler {
 			updateCar.setInt(1,vid);
 			updateCar.executeUpdate();
 
-			RentalValue value = calculateValue(fromDate, fromTime, returnDate, returnTime, vtName, beginningOdometer, odometerReading, isTankFull);
-			ReturnModel model = new ReturnModel(rid,returnDate,returnTime,odometerReading,isTankFull, value.totalValue );
+			RentalValue value = calculateValue(fromDateTime, returnDateTime, vtName, beginningOdometer, odometerReading, isTankFull);
+			ReturnModel model = new ReturnModel(rid,returnDateTime,odometerReading,isTankFull, value.totalValue );
 			insert("Return",model);
 
 			rs.close();
@@ -517,11 +515,11 @@ public class DatabaseConnectionHandler {
 
 	}
 
-	public RentalValue calculateValue(Date fromDate, Time fromTime, Date returnDate, Time returnTime, String vtname, int bOdmtr, int eOdmtr, boolean tankFull) throws SQLException {
+	public RentalValue calculateValue(Timestamp fromDateTime, Timestamp toDateTime, String vtname, int bOdmtr, int eOdmtr, boolean tankFull) throws SQLException {
 
 		RentalValue value= new RentalValue();
-		long days = ChronoUnit.DAYS.between(fromDate.toLocalDate(), returnDate.toLocalDate());
-		long hours = ChronoUnit.HOURS.between(fromTime.toLocalTime(), returnTime.toLocalTime());
+		long days = ChronoUnit.DAYS.between(fromDateTime.toLocalDateTime().toLocalDate(),toDateTime.toLocalDateTime().toLocalDate());
+		long hours = ChronoUnit.HOURS.between(fromDateTime.toLocalDateTime().toLocalTime(),toDateTime.toLocalDateTime().toLocalTime());
 
 		try{
 			PreparedStatement vt = connection.prepareStatement("select * from VehicleType where vtname = ?");

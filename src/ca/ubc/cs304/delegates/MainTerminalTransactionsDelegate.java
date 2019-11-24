@@ -16,14 +16,14 @@ import java.sql.Timestamp;
  * Bank is the actual class that will implement the methods.
  */
 public interface MainTerminalTransactionsDelegate {
-    public void showAvailableVehicles(String location, Date startDate, Date endDate, String carType);
-    public void rentVehicle(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location);
-    public void reserveVehicle(String carType, String dLicense, Date startDate, Time startTime, Date endDate, Time endTime, String location);
-    public void returnVehicle(int rid, Date returnDate, Time returnTime, int odometerReading, boolean isTankFull);
+
+    public void showAvailableVehicles(String location, Timestamp fromDateTime, Timestamp toDateTimee, String carType);
+    public void rentVehicle(int confNo, String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location);
+    public void reserveVehicle(String carType, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String location);
+    public void returnVehicle(int rid, Timestamp returnTime, int odometerReading, boolean isTankFull);
     public void generateRentalsReport(Timestamp date);
     public void generateRentalsBranchReport(Timestamp date, String branch);
     public void generateReturnsReport(Timestamp date);
     public void generateReturnsBranchReport(Timestamp date, String branch);
-
     public void terminalTransactionsFinished();
 }

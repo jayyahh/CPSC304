@@ -13,10 +13,10 @@ public class RentModel {
     private final int odometer;
     private final String cardName;
     private final int cardNo;
-    private final Date expDate;
+    private final Timestamp expDate;
     private final int confNo;
 
-    public RentModel(int rid, int vid, String dLicense, Timestamp fromDate, Timestamp toDate, String location, int odometer, String cardName, int cardNo, Date expDate, int confNo){
+    public RentModel(int rid, int vid, String dLicense, Timestamp fromDate, Timestamp toDate, String location, int odometer, String cardName, int cardNo, Timestamp expDate, int confNo){
         this.rid = rid;
         this.vid = vid;
         this.dLicense = dLicense;
@@ -67,7 +67,7 @@ public class RentModel {
         return cardNo;
     }
 
-    public Date getExpDate() {
+    public Timestamp getExpDate() {
         return expDate;
     }
 
