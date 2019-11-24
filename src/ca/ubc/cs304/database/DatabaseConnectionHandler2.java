@@ -1,15 +1,10 @@
 package ca.ubc.cs304.database;
 
 import ca.ubc.cs304.model.*;
-import com.sun.jdi.Value;
-
-import javax.swing.plaf.nimbus.State;
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
+
 
 /**
  * This class handles all database related transactions
@@ -20,14 +15,16 @@ public class DatabaseConnectionHandler2 {
 	private static final String WARNING_TAG = "[WARNING]";
 	private int uniqueRId = 0;
 	private int uniqueConfNo = 1000000;
+	private ConnectionHandler handler;
 
 	private Connection connection = null;
 
-	public DatabaseConnectionHandler2() {
+	public DatabaseConnectionHandler2(ConnectionHandler handler) {
 		try {
 			// Load the Oracle JDBC driver
 			// Note that the path could change for new drivers
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			this.handler = handler;
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
@@ -53,12 +50,12 @@ public class DatabaseConnectionHandler2 {
 
 	public void createCustomer(String dLicense, String name, String address, String phone){
 		CustomerModel model = new CustomerModel(phone,name,address, dLicense);
-		//insert("Customer", model);
+		handler.insert("Customer", model);
 	}
 
 	public boolean checkCustomer(String dLicense) throws SQLException {
 		try {
-			PreparedStatement stmt = connection.prepareStatement("select * from customer where dlicense = ?");
+			PreparedStatement stmt = connection.prepareStatement("select * from customer where dLicense = ?");
 			stmt.setString(1, dLicense);
 			ResultSet rs = stmt.executeQuery();
 			if (!rs.next()) {
@@ -69,7 +66,7 @@ public class DatabaseConnectionHandler2 {
 			return true;
 		}
 		catch (SQLException e) {
-
+			rollbackConnection();
 			throw new SQLException(e.getMessage());
 		}
 	}
@@ -77,19 +74,13 @@ public class DatabaseConnectionHandler2 {
 
 
 	public ReservationModel makeReservation (String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location) throws SQLException {
-		//try{
 
 			int confNo = getConfNo();
 
 			ReservationModel model = new ReservationModel(confNo, vtname, dLicense, fromDate, fromTime, toDate, toTime, location);
-			//insert("Reservation", ReservationModel);
-
+			handler.insert("Reservation", model);
 
 			return model;
-
-//		} catch (SQLException e) {
-//			throw new SQLException(e.getMessage());
-//		}
 	}
 
 	public RentModel rentAVehicleWithoutReservation(String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location) throws SQLException {
@@ -127,7 +118,7 @@ public class DatabaseConnectionHandler2 {
 			int odometer = carRs.getInt("odometer");
 
 			RentModel model = new RentModel(getRId(), vid, dLicense, fromDate, fromTime, toDate, toTime, location, odometer, cardName, cardNo, expDate, confNo);
-			//insert("Rent", model);
+			handler.insert("Rent", model);
 
 			PreparedStatement vtType = connection.prepareStatement("update VehicleType set numAvail = numAvail - 1 where vtname = ?");
 			vtType.setString(1,vtName);
@@ -148,6 +139,7 @@ public class DatabaseConnectionHandler2 {
 			return model;
 
 		} catch (SQLException e) {
+			rollbackConnection();
 			throw new SQLException(e.getMessage());
 		}
 	}
@@ -181,12 +173,13 @@ public class DatabaseConnectionHandler2 {
 													rs.getString("vtname"),
 													rs.getString("location"),
 													rs.getString("city"),
-													rs.getString("fueltype"));
+													rs.getString("fuelType"));
 				result.add(model);
 			}
 			rs.close();
 			ps.close();
 		} catch (SQLException e) {
+			rollbackConnection();
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 
@@ -201,6 +194,7 @@ public class DatabaseConnectionHandler2 {
 		return rs;
 		}
 		catch (SQLException e) {
+			rollbackConnection();
 			throw new SQLException(e.getMessage());
 		}
 	}
@@ -224,7 +218,7 @@ public class DatabaseConnectionHandler2 {
 
 			RentalValue value = calculateValue(fromDate, fromTime, returnDate, returnTime, vtName, beginningOdometer, odometerReading, isTankFull);
 			ReturnModel model = new ReturnModel(rid,returnDate,returnTime,odometerReading,isTankFull, value.totalValue );
-			//insert("Return",model);
+			handler.insert("Return",model);
 
 			rs.close();
 			vt.close();
@@ -236,6 +230,7 @@ public class DatabaseConnectionHandler2 {
 
 		}
 		catch (SQLException e) {
+			rollbackConnection();
 			throw new SQLException((e.getMessage()));
 		}
 
