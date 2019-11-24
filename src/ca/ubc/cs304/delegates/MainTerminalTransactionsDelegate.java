@@ -1,6 +1,7 @@
 package ca.ubc.cs304.delegates;
 
 import java.sql.Date;
+import java.sql.Time;
 
 /**
  * This interface uses the delegation design pattern where instead of having
@@ -12,7 +13,7 @@ import java.sql.Date;
  * Bank is the actual class that will implement the methods.
  */
 public interface MainTerminalTransactionsDelegate {
-    public void showAvailableVehicles(String carType, String location, Date startDate, int startHour, int startMin, Date endDate, int endHour, int endMin);
+    public void showAvailableVehicles(String carType, String location, Date startDate, Time startTime, Date endDate, Time endTime);
     public void rentVehicle();
     public void returnVehicle();
     public void generateRentalsReport(Date date);

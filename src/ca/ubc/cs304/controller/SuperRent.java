@@ -4,10 +4,13 @@ import ca.ubc.cs304.database.DatabaseConnectionHandler;
 import ca.ubc.cs304.delegates.LoginWindowDelegate;
 import ca.ubc.cs304.delegates.MainTerminalTransactionsDelegate;
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.DailyRentalReportModel;
+import ca.ubc.cs304.model.DailyReturnReportModel;
 import ca.ubc.cs304.ui.LoginWindow;
 import ca.ubc.cs304.ui.SuperRentTerminalTransactions;
 
 import java.sql.Date;
+import java.sql.Time;
 
 /**
  * This is the main controller class that will orchestrate everything.
@@ -50,7 +53,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         }
     }
 
-    public void showAvailableVehicles(String carType, String location, Date startDate, int startHour, int startMin, Date endDate, int endHour, int endMin) {
+    public void showAvailableVehicles(String carType, String location, Date startDate, Time startTime, Date endDate, Time endTime) {
 
     }
 
@@ -63,19 +66,31 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
     }
 
     public void generateRentalsReport(Date date) {
-
+        DailyRentalReportModel[] dailyRentalReportModels = dbHandler.generateRentalsReport(date);
+        int newRentals = dbHandler.generateTotalNewRental(date);
+        // need to compute total count of vehicles per branch
+        // what do we do with the data?
     }
 
     public void generateRentalsBranchReport(Date date, String branch) {
-
+        DailyRentalReportModel[] dailyRentalReportModels = dbHandler.generateRentalsReportByBranch(date, branch);
+        int newRentals = dbHandler.generateTotalNewRentalbyBranch(date, branch);
+        // need to compute total count of vehicles
+        // what do we do with the data?
     }
 
     public void generateReturnsReport(Date date) {
-
+        DailyReturnReportModel[] dailyReturnReportModels = dbHandler.generateReturnsReport(date);
+        int totalEarning = dbHandler.generateTotalDailyEarning(date);
+        int totalReturns = dbHandler.generateTotalNewReturn(date);
+        // need to compute subtotals
+        // what do we do with the data?
     }
 
     public void generateReturnsBranchReport(Date date, String branch) {
-
+        DailyReturnReportModel[] dailyReturnReportModels = dbHandler.generateReturnsReportByBranch(date, branch);
+        // need to compute subtotal
+        // what do we do with the data?
     }
 
 

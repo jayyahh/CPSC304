@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Date;
+import java.sql.Time;
 
 import ca.ubc.cs304.delegates.MainTerminalTransactionsDelegate;
 
@@ -76,11 +77,13 @@ public class SuperRentTerminalTransactions {
         Date startDate = selectDate("start");
         int startHour = selectHour();
         int startMin = selectMin();
+        Time startTime = new Time (startHour, startMin, 0);
         Date endDate = selectDate("end");
         int endHour = selectHour();
         int endMin = selectMin();
+        Time endTime = new Time (endHour, endMin, 0);
         if (isEndTimeLater(startDate, startHour, startMin, endDate, endHour, endMin)){
-            delegate.showAvailableVehicles(carType, location, startDate, startHour, startMin, endDate, endHour, endMin);
+            delegate.showAvailableVehicles(carType, location, startDate, startTime, endDate, endTime);
         } else {
             System.out.println("End time must be later than start time, quitting program");
             handleQuitOption();

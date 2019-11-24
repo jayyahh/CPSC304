@@ -2,10 +2,10 @@ package ca.ubc.cs304.model;
 
 public class VehicleModel {
     private final int vid;
-    private final int vLicense;
+    private final String vLicense;
     private final String make;
     private final String model;
-    private final int year;
+    private final String year;
     private final String color;
     private final int odometer;
     private final String status;
@@ -15,7 +15,7 @@ public class VehicleModel {
     private final String fuelType;
 
 
-    public VehicleModel(int vid, int vLicense, String make, String model, int year, String color, int odometer, String status,
+    public VehicleModel(int vid, String vLicense, String make, String model, String year, String color, int odometer, String status,
                         String vt, String locn, String city, String fuelType) {
         this.vid = vid;
         this.vLicense = vLicense;
@@ -36,7 +36,7 @@ public class VehicleModel {
         return this.vid;
     }
 
-    public int getVLicense(){
+    public String getVLicense(){
         return this.vLicense;
     }
 
@@ -66,7 +66,7 @@ public class VehicleModel {
         return this.fuelType;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
