@@ -47,7 +47,7 @@ public class Bank implements LoginWindowDelegate, TerminalTransactionsDelegate {
 			}
 		}
 	}
-	
+
 	/**
 	 * TermainalTransactionsDelegate Implementation
 	 * 
