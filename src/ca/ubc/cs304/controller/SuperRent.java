@@ -60,11 +60,9 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
     public void showAvailableVehicles(String location, Date startDate, Date endDate, String carType) {
         VehicleModel[] result = dbHandler.getAvailableCarInfo(location, startDate, endDate, carType);
         if (result.length == 0){
-            System.out.println("No available vehicles for selected dates! Please try again");
-            System.exit(-1);
+            System.out.println("No available vehicles for selected dates!");
+            transaction.showMainMenu(this);
         }else{
-
-
             for (int i = 0; i < result.length; i++) {
                 VehicleModel model = result[i];
 
@@ -124,7 +122,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
 
             if(dbHandler.getAvailableCarInfo(location,startDate,endDate,carType).length == 0){
                 System.out.print("No cars available for the selected inputs! Please try again");
-                //use system to tell user to try again
+                transaction.showMainMenu(this);
             }
             model = dbHandler.makeReservation(carType, dLicense, startDate, startTime, endDate, endTime, location);
             System.out.print("Reservation completed!");
@@ -139,12 +137,27 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         DailyRentalReportModel[] dailyRentalReportModels = dbHandler.generateRentalsReport(date);
         DailyRentalReportPerBranchModel[] dailyRentalReportPerBranchModels = dbHandler.generateRentalsReportPerBranch(date);
         int newRentals = dbHandler.generateTotalNewRental(date);
+        System.out.println();
+        System.out.printf("%-15.15s", "Branch");
+        System.out.printf("%-20.20s", "Vehicle Type");
+        System.out.printf("%-25.25s", "Total Rental");
+        System.out.println();
         for (int i = 0 ; i < dailyRentalReportModels.length ; i++) {
-            System.out.println("Branch: " + dailyRentalReportModels[i].branch + ", Vehicle Yype: " + dailyRentalReportModels[i].vehicleType + ", Total of such Type: " + dailyRentalReportModels[i].typeCount);
+            System.out.printf("%-15.15s", dailyRentalReportModels[i].branch);
+            System.out.printf("%-20.20s", dailyRentalReportModels[i].vehicleType);
+            System.out.printf("%-10.10s", dailyRentalReportModels[i].typeCount);
+            System.out.println();
         }
+        System.out.println();
+        System.out.printf("%-15.15s", "Branch");
+        System.out.printf("%-25.25s", "Total Rental");
+        System.out.println();
         for (int i = 0 ; i < dailyRentalReportPerBranchModels.length ; i++) {
-            System.out.println("Branch: " + dailyRentalReportPerBranchModels[i].branch + ", Total Rental Count of Branch: " + dailyRentalReportPerBranchModels[i].totalRentalCount);
+            System.out.printf("%-15.15s", dailyRentalReportPerBranchModels[i].branch);
+            System.out.printf("%-25.25s", dailyRentalReportPerBranchModels[i].totalRentalCount);
+            System.out.println();
         }
+        System.out.println();
         System.out.println("Total New Rentals on " + date + " : " + newRentals);
     }
 
@@ -152,8 +165,16 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         DailyRentalReportModel[] dailyRentalReportModels = dbHandler.generateRentalsReportByBranch(date, branch);
         int newRentals = dbHandler.generateTotalNewRentalbyBranch(date, branch);
         int totalOfBranch = dbHandler.generateTotalRentalbyBranch(date, branch);
+        System.out.println();
+        System.out.printf("%-15.15s", "Branch");
+        System.out.printf("%-20.20s", "Vehicle Type");
+        System.out.printf("%-25.25s", "Total Rental");
+        System.out.println();
         for (int i = 0; i < dailyRentalReportModels.length; i++) {
-            System.out.println("Branch: " + dailyRentalReportModels[i].branch + ", Vehicle Type: " + dailyRentalReportModels[i].vehicleType + ", Total of such Type: " + dailyRentalReportModels[i].typeCount);
+            System.out.printf("%-15.15s", branch);
+            System.out.printf("%-20.20s", dailyRentalReportModels[i].vehicleType);
+            System.out.printf("%-10.10s", dailyRentalReportModels[i].typeCount);
+            System.out.println();
         }
         System.out.println("Total New Rentals on " + date + " at branch " + branch + " : " + newRentals);
         System.out.println("Total Rentals of Branch: " + totalOfBranch);
@@ -164,11 +185,29 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         DailyReturnReportPerBranchModel[] dailyReturnReportPerBranchModels = dbHandler.generateReturnsReportPerBranch(date);
         int totalEarning = dbHandler.generateTotalDailyEarning(date);
         int totalReturns = dbHandler.generateTotalNewReturn(date);
+        System.out.println();
+        System.out.printf("%-15.15s", "Branch");
+        System.out.printf("%-20.20s", "Vehicle Type");
+        System.out.printf("%-25.25s", "Total Return");
+        System.out.printf("%-25.25s", "Total Earnings");
+        System.out.println();
         for (int i = 0; i < dailyReturnReportModels.length; i++) {
-            System.out.println("Branch: " + dailyReturnReportModels[i].branch + ", Vehicle Type: " + dailyReturnReportModels[i].vehicleType + ", Total of such Type: " + dailyReturnReportModels[i].typeCount + ", Total Earning from such Type: " + dailyReturnReportModels[i].value);
+            System.out.printf("%-15.15s", dailyReturnReportModels[i].branch);
+            System.out.printf("%-20.20s", dailyReturnReportModels[i].vehicleType);
+            System.out.printf("%-25.25s", dailyReturnReportModels[i].typeCount);
+            System.out.printf("%-25.25s", dailyReturnReportModels[i].value);
+            System.out.println();
         }
+        System.out.println();
+        System.out.printf("%-15.15s", "Branch");
+        System.out.printf("%-25.25s", "Total Return");
+        System.out.printf("%-25.25s", "Total Earnings");
+        System.out.println();
         for (int i = 0; i< dailyReturnReportPerBranchModels.length; i++) {
-            System.out.println("Branch: " + dailyReturnReportPerBranchModels[i].branch + ", Total Return Count of Branch: " + dailyReturnReportPerBranchModels[i].totalReturnCount + ", Total Earning of Branch: " + dailyReturnReportPerBranchModels[i].value);
+            System.out.printf("%-15.15s", dailyReturnReportPerBranchModels[i].branch);
+            System.out.printf("%-25.25s", dailyReturnReportPerBranchModels[i].totalReturnCount);
+            System.out.printf("%-25.25s", dailyReturnReportPerBranchModels[i].value);
+            System.out.println();
         }
         System.out.println("Total Returns on " + date + " : " + totalReturns);
         System.out.println("Total Earning of Company on " + date + " : " + totalEarning);
@@ -178,8 +217,18 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         DailyReturnReportModel[] dailyReturnReportModels = dbHandler.generateReturnsReportByBranch(date, branch);
         int totalReturnsOfBranch = dbHandler.generateTotalReturnByBranch(date, branch);
         int totalEarningOfBranch = dbHandler.generateTotalDailyEarningByBranch(date, branch);
+        System.out.println();
+        System.out.printf("%-15.15s", "Branch");
+        System.out.printf("%-20.20s", "Vehicle Type");
+        System.out.printf("%-25.25s", "Total Return");
+        System.out.printf("%-25.25s", "Total Earnings");
+        System.out.println();
         for (int i = 0; i< dailyReturnReportModels.length; i++) {
-            System.out.println("Branch: " + dailyReturnReportModels[i].branch + ", Vehicle Type: " + dailyReturnReportModels[i].vehicleType + ", Total of such Type: " + dailyReturnReportModels[i].typeCount + ", Total Earning from such Type: " + dailyReturnReportModels[i].value);
+            System.out.printf("%-15.15s", branch);
+            System.out.printf("%-20.20s", dailyReturnReportModels[i].vehicleType);
+            System.out.printf("%-25.25s", dailyReturnReportModels[i].typeCount);
+            System.out.printf("%-25.25s", dailyReturnReportModels[i].value);
+            System.out.println();
         }
         System.out.println("Total Returns on " + date + " of branch " + branch + " : " + totalReturnsOfBranch);
         System.out.println("Total Earning of branch " + branch + " on " + date + " : " + totalEarningOfBranch);
