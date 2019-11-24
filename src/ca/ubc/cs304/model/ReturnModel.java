@@ -2,7 +2,7 @@ package ca.ubc.cs304.model;
 
 import com.sun.jdi.Value;
 import java.sql.Time;
-import java.util.Date;
+import java.sql.Date;
 
 public class ReturnModel {
     private final int rid;

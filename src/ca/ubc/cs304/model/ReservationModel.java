@@ -15,7 +15,8 @@ public class ReservationModel {
 
     private final String location;
 
-    public ReservationModel(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location) {
+    public ReservationModel(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate,
+                            Time toTime, String location) {
         this.confNo = confNo;
         this.vtname = vtname;
         this.dLicense = dLicense;

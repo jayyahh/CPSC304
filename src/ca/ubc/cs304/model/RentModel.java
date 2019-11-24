@@ -21,7 +21,7 @@ public class RentModel {
     public RentModel(int rid, int vid, String dlicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location, int odometer, String cardName, int cardNo, Date expDate, int confNo){
         this.rid = rid;
         this.vid = vid;
-        this.dlicense = dLicense;
+        this.dLicense = dlicense;
         this.fromDate = fromDate;
         this.fromTime = fromTime;
         this.toDate = toDate;

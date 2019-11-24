@@ -9,15 +9,15 @@ import java.util.ArrayList;
 
 public class ConnectionHandler {
     private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
-    private static final String EXCEPTION_TAG = "[EXCEPTION]";
-    private static final String WARNING_TAG = "[WARNING]";
+    private static final String EXCEPTION_TAG = "[EXCEPTION] ";
+    private static final String WARNING_TAG = "[WARNING] ";
     private Connection connection = null;
 
     public ConnectionHandler() {
         try {
             DriverManager.registerDriver(new OracleDriver());
         } catch (SQLException var2) {
-            System.out.println("[EXCEPTION] " + var2.getMessage());
+            System.out.println(EXCEPTION_TAG + var2.getMessage());
         }
     }
 
@@ -27,7 +27,7 @@ public class ConnectionHandler {
                 connection.close();
             }
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            System.out.println(EXCEPTION_TAG + e.getMessage());
         }
     }
 
@@ -114,7 +114,7 @@ public class ConnectionHandler {
                     break;
                 case "Reservation":
                     ReservationModel reservation = (ReservationModel) Class.forName("ReservationModel").cast(o);
-                    ps = connection.prepareStatement("INSERT INTO reservation VALUES (?,?,?,?,?,?,?,?,?)");
+                    ps = connection.prepareStatement("INSERT INTO reservation VALUES (?,?,?,?,?,?,?,?)");
                     ps.setInt(1, reservation.getConfNo());
                     ps.setString(2, reservation.getVtname());
                     ps.setString(3, reservation.getdLicense());
@@ -122,8 +122,8 @@ public class ConnectionHandler {
                     ps.setTime(5, reservation.getFromTime());
                     ps.setDate(6, reservation.getToDate());
                     ps.setTime(7, reservation.getToTime());
-                    ps.setString(8, reservation.getLocn());
-                    ps.setString(9, reservation.getCity());
+                    ps.setString(8, reservation.getLocation());
+
 
                     ps.executeUpdate();
                     connection.commit();
@@ -134,7 +134,7 @@ public class ConnectionHandler {
                     VehicleModel vehicle = (VehicleModel) Class.forName("VehicleModel").cast(o);
                     ps = connection.prepareStatement("INSERT INTO Vehicle VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
                     ps.setInt(1, vehicle.getVid());
-                    ps.setString(2, vehicle.getvLicense());
+                    ps.setString(2, vehicle.getVLicense());
                     ps.setString(3, vehicle.getMake());
                     ps.setString(4, vehicle.getModel());
                     ps.setString(5, vehicle.getYear());
@@ -221,28 +221,119 @@ public class ConnectionHandler {
 
     }
 
-    /*public Object[] viewTable(String tableName) {
-        ArrayList result = new ArrayList();
+    public Object[] viewTable(String tableName) {
+        ArrayList<Object> result = new ArrayList<Object>();
         String query = "SELECT * FROM " + tableName;
+
         try {
             Statement stmt = this.connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
-                Object o = new BranchModel(rs.getString("branch_addr"), rs.getString("branch_city"), rs.getInt("branch_id"), rs.getString("branch_name"), rs.getInt("branch_phone"));
-                result.add(model);
+                switch (tableName) {
+                    case "Customer":
+                        CustomerModel c = new CustomerModel(
+                                rs.getString("cellphone"),
+                                rs.getString("name"),
+                                rs.getString("address"),
+                                rs.getString("dLicense"));
+                        result.add(c);
+                        break;
+                    case "Vehicle":
+                        VehicleModel v = new VehicleModel(
+                                rs.getInt("vid"), rs.getString("vLicense"),
+                                rs.getString("make"),
+                                rs.getString("model"),
+                                rs.getString("year"),
+                                rs.getString("color"),
+                                rs.getInt("odometer"),
+                                rs.getString("status"),
+                                rs.getString("vt"),
+                                rs.getString("locn"),
+                                rs.getString("city"),
+                                rs.getString("fuelType"));
+                        result.add(v);
+                        break;
+                    case "VehicleType":
+                        VehicleTypeModel vt = new VehicleTypeModel(
+                                rs.getString("vtname"),
+                                rs.getString("features"),
+                                rs.getDouble("wrate"),
+                                rs.getDouble("drate"),
+                                rs.getDouble("hrate"),
+                                rs.getDouble("wirate"),
+                                rs.getDouble("dirate"),
+                                rs.getDouble("hirate"),
+                                rs.getDouble("krate"));
+                        result.add(vt);
+                        break;
+                    case "Reservation":
+                        ReservationModel res = new ReservationModel(
+                                rs.getInt("confNo"),
+                                rs.getString("vtname"),
+                                rs.getString("dLicense"),
+                                rs.getDate("fromDate"),
+                                rs.getTime("fromTime"),
+                                rs.getDate("toDate"),
+                                rs.getTime("toTime"),
+                                rs.getString("location"));
+                        result.add(res);
+                        break;
+                    case "Rent":
+                        RentModel r = new RentModel(
+                                rs.getInt("rid"),
+                                rs.getInt("vid"),
+                                rs.getString("dLicense"),
+                                rs.getDate("fromDate"),
+                                rs.getTime("fromTime"),
+                                rs.getDate("toDate"),
+                                rs.getTime("toTime"),
+                                rs.getString("location"),
+                                rs.getInt("odometer"),
+                                rs.getString("cardname"), rs.getInt("cardNo"),
+                                rs.getDate("expDate"),
+                                rs.getInt("confNo"));
+                        result.add(r);
+                        break;
+                    case "Return":
+                        ReturnModel ret = new ReturnModel(
+                                rs.getInt("rid"),
+                                rs.getDate("returnDate"),
+                                rs.getTime("returnTime"),
+                                rs.getInt("odometer"),
+                                rs.getBoolean("fullTank"),
+                                rs.getDouble("value"));
+                        result.add(ret);
+                        break;
+                }
             }
-
             rs.close();
             stmt.close();
+
         } catch (SQLException var5) {
             System.out.println("[EXCEPTION] " + var5.getMessage());
         }
 
-        return (BranchModel[])result.toArray(new BranchModel[result.size()]);
-
+        return (Object[]) result.toArray(new Object[result.size()]);
     }
-*/
+
+
+    public ArrayList<String> viewAllTables() {
+        ArrayList<String> result = new ArrayList<String>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT table_name FROM all_tables");
+            while (rs.next()) {
+                result.add(rs.getString("table_name"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + e.getMessage());
+        }
+
+        return result;
+    }
+
 
     public boolean login(String username, String password) {
         try {
