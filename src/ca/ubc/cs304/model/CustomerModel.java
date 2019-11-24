@@ -4,16 +4,16 @@ public class CustomerModel {
     private final String cellphone;
     private final String name;
     private final String address;
-    private final int dLicense;
+    private final String dLicense;
 
-    public CustomerModel(String cell, String name, String address, int dLicense) {
+    public CustomerModel(String cell, String name, String address, String dLicense) {
         this.cellphone = cell;
         this.name = name;
         this.address = address;
         this.dLicense = dLicense;
     }
 
-    public int getdLicense() {
+    public String getdLicense() {
         return this.dLicense;
     }
 

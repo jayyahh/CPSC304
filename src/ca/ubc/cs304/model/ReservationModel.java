@@ -6,13 +6,14 @@ import java.util.*;
 public class ReservationModel {
     private final int confNo;
     private final String vtname;
-    private final int dLicense;
+    private final String dLicense;
     private final Date fromDate;
     private final Date toDate;
     private final Time toTime;
     private final Time fromTime;
+    private final String location;
 
-    public ReservationModel(int confNo, String vtname, int dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime) {
+    public ReservationModel(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location) {
         this.confNo = confNo;
         this.vtname = vtname;
         this.dLicense = dLicense;
@@ -20,31 +21,36 @@ public class ReservationModel {
         this.fromTime = fromTime;
         this.toDate = toDate;
         this.toTime = toTime;
+        this.location = location;
     }
 
-     public int getConfNo() {
+    public int getConfNo() {
         return this.confNo;
     }
-     public String getVtname() {
+
+    public String getVtname() {
         return this.vtname;
-     }
+    }
 
-     public int getdLicense() {
+    public String getdLicense() {
         return this.dLicense;
-     }
+    }
 
-     public Date getFromDate() {
+    public Date getFromDate() {
         return this.fromDate;
-     }
-     public Time getFromTime() {
+    }
+
+    public Time getFromTime() {
         return this.fromTime;
     }
 
-     public Date getToDate() {
+    public Date getToDate() {
         return this.toDate;
-     }
+    }
 
-     public Time getToTime() {
+    public Time getToTime() {
         return this.toTime;
-     }
+    }
+
+    public String getLocation() {return this.location; }
 }
