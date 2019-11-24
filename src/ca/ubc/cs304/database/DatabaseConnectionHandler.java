@@ -336,7 +336,7 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public ReservationModel makeReservation (String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location) throws SQLException {
+	public ReservationModel makeReservation (String vtname, String dLicense, Timestamp fromDateTime,Timestamp toDateTime, String location) throws SQLException {
 
 		int defaultConfNo= 1000000;
 		Statement stmt = connection.createStatement();
@@ -346,7 +346,7 @@ public class DatabaseConnectionHandler {
 			defaultConfNo = 1000000 + rs2.getInt("nums");
 		}
 
-		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDate, fromTime, toDate, toTime, location);
+		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDateTime, toDateTime, location);
 		insert("Reservation", model);
 
 		return model;
