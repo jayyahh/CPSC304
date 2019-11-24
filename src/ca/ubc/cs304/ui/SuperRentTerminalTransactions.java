@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
 
 import ca.ubc.cs304.controller.SuperRent;
 import ca.ubc.cs304.delegates.MainTerminalTransactionsDelegate;
@@ -79,9 +80,11 @@ public class SuperRentTerminalTransactions {
         String carType = selectCarType();
         String location = selectLocation();
         Date startDate = selectDate("start");
+        Timestamp startTS = convertToSqlTimeStamp(startDate,12,30);
         Date endDate = selectDate("end");
+        Timestamp endTs = convertToSqlTimeStamp(endDate,12,30);
         if (endDate.compareTo(startDate) > 0) {
-            delegate.showAvailableVehicles(location, startDate, endDate, carType);
+            delegate.showAvailableVehicles(location, startTS, endTs, carType);
         } else {
             System.out.println("End date must be later than start date, quitting program...");
             handleQuitOption();
@@ -94,14 +97,14 @@ public class SuperRentTerminalTransactions {
         Date startDate = selectDate("start");
         int startHour = selectHour();
         int startMin = selectMin();
-        Time startTime = convertToSqlTime(startHour,startMin);
+        Timestamp startDateTime = convertToSqlTimeStamp(startDate,startHour,startMin);
         Date endDate = selectDate("end");
         int endHour = selectHour();
         int endMin = selectMin();
-        Time endTime = convertToSqlTime(endHour,endMin);
+        Timestamp endDateTime = convertToSqlTimeStamp(endDate,endHour,endMin);
         String dLicense = enterAny("driver's license");
         if (isEndTimeLater(startDate, startHour, startMin, endDate, endHour, endMin)){
-            delegate.reserveVehicle(carType, dLicense, startDate, startTime, endDate, endTime, location);
+            delegate.reserveVehicle(carType, dLicense, startDateTime, endDateTime , location);
         } else {
             System.out.println("End time must be later than start time, quitting program...");
             handleQuitOption();
@@ -116,16 +119,16 @@ public class SuperRentTerminalTransactions {
         Date startDate = selectDate("start");
         int startHour = selectHour();
         int startMin = selectMin();
-        Time startTime =convertToSqlTime(startHour,startMin);
+        Timestamp startDateTime =convertToSqlTimeStamp(startDate,startHour,startMin);
         Date endDate = selectDate("end");
         int endHour = selectHour();
         int endMin = selectMin();
-        Time endTime = convertToSqlTime(endHour,endMin);
+        Timestamp endDateTime = convertToSqlTimeStamp(endDate,endHour,endMin);
         String name = enterAny("name");
         String cardName = enterAny("name on card");
         int cardNo = Integer.parseInt(enterAny("card number"));
         Date expDate = selectDate("card expiration date");
-        delegate.rentVehicle(confNo, carType, dLicense, startDate, startTime, endDate, endTime, name, cardName, cardNo, expDate, location);
+        delegate.rentVehicle(confNo, carType, dLicense,startDateTime,endDateTime, name, cardName, cardNo, expDate, location);
     }
 
     private void returnVehicle() {
@@ -133,10 +136,10 @@ public class SuperRentTerminalTransactions {
         Date returnDate = selectDate("return");
         int hour = selectHour();
         int min = selectMin();
-        Time time = convertToSqlTime(hour,min);
+        Timestamp returnDateTime = convertToSqlTimeStamp(returnDate,hour,min);
         int odometer = Integer.parseInt(enterAny("odometer"));
         boolean isTankFull = selectBool();
-        delegate.returnVehicle(rid, returnDate, time, odometer, isTankFull);
+        delegate.returnVehicle(rid, returnDateTime, odometer, isTankFull);
     }
 
     private void generateDailyReport() {
@@ -155,21 +158,25 @@ public class SuperRentTerminalTransactions {
                 switch (choice) {
                     case 1:
                         Date date1 = selectDate("report");
-                        delegate.generateRentalsReport(date1);
+                        Timestamp d1 = convertToSqlTimeStamp(date1,12,30);
+                        delegate.generateRentalsReport(d1);
                         break;
                     case 2:
                         Date date2 = selectDate("report");
+                        Timestamp d2 = convertToSqlTimeStamp(date2,12,30);
                         String branch1 = selectLocation();
-                        delegate.generateRentalsBranchReport(date2, branch1);
+                        delegate.generateRentalsBranchReport(d2, branch1);
                         break;
                     case 3:
                         Date date3 = selectDate("report");
+                        Timestamp d3 = convertToSqlTimeStamp(date3,12,30);
                         delegate.generateReturnsReport(date3);
                         break;
                     case 4:
                         Date date4 = selectDate("report");
+                        Timestamp d4 = convertToSqlTimeStamp(date4,12,30);
                         String branch2 = selectLocation();
-                        delegate.generateReturnsBranchReport(date4, branch2);
+                        delegate.generateReturnsBranchReport(d4, branch2);
                         break;
                     case 5:
                         handleQuitOption();
@@ -451,9 +458,10 @@ public class SuperRentTerminalTransactions {
         }
         return input;
     }
-    private Time convertToSqlTime(int hour, int minute){
-        String time = hour+":"+minute+":"+"00";
-        return Time.valueOf(time);
+    private Timestamp convertToSqlTimeStamp(Date date,int hour, int minute){
+        String dateString = date.toString();
+        String timeString = hour+":"+minute+":"+"00";
+        return Timestamp.valueOf(dateString + " " +timeString);
     }
 
     private String readLine() {
