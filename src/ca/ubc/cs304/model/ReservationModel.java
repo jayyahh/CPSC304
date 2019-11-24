@@ -1,6 +1,7 @@
 package ca.ubc.cs304.model;
 
 import java.sql.Time;
+import java.sql.Date;
 import java.util.*;
 
 public class ReservationModel {
@@ -11,6 +12,7 @@ public class ReservationModel {
     private final Date toDate;
     private final Time toTime;
     private final Time fromTime;
+
     private final String location;
 
     public ReservationModel(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location) {
