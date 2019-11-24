@@ -652,7 +652,7 @@ public class DatabaseConnectionHandler {
 					ps.setInt(6, rent.getOdometer());
 					ps.setString(7, rent.getCardName());
 					ps.setInt(8, rent.getCardNo());
-					ps.setDate(9, rent.getExpDate());
+					ps.setTimestamp(9, rent.getExpDate());
 					ps.setInt(10, rent.getConfNo());
 
 					ps.executeUpdate();
@@ -817,10 +817,8 @@ public class DatabaseConnectionHandler {
 								rs.getInt("confNo"),
 								rs.getString("vtname"),
 								rs.getString("dLicense"),
-								rs.getDate("fromDate"),
-								rs.getTime("fromTime"),
-								rs.getDate("toDate"),
-								rs.getTime("toTime"),
+								rs.getTimestamp("fromDateTime"),
+								rs.getTimestamp("toDateTime"),
 								rs.getString("location"));
 						result.add(res);
 						break;
@@ -829,22 +827,19 @@ public class DatabaseConnectionHandler {
 								rs.getInt("rid"),
 								rs.getInt("vid"),
 								rs.getString("dLicense"),
-								rs.getDate("fromDate"),
-								rs.getTime("fromTime"),
-								rs.getDate("toDate"),
-								rs.getTime("toTime"),
+								rs.getTimestamp("fromDateTime"),
+								rs.getTimestamp("toDateTime"),
 								rs.getString("location"),
 								rs.getInt("odometer"),
-								rs.getString("cardname"), rs.getInt("cardNo"),
-								rs.getDate("expDate"),
+								rs.getString("cardName"), rs.getInt("cardNo"),
+								rs.getTimestamp("ExpDate"),
 								rs.getInt("confNo"));
 						result.add(r);
 						break;
 					case "Return":
 						ReturnModel ret = new ReturnModel(
 								rs.getInt("rid"),
-								rs.getDate("returnDate"),
-								rs.getTime("returnTime"),
+								rs.getTimestamp("returnDateTime"),
 								rs.getInt("odometer"),
 								rs.getBoolean("fullTank"),
 								rs.getDouble("value"));
