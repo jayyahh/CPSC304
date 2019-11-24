@@ -1,21 +1,22 @@
 package ca.ubc.cs304.model;
-import java.sql.Date;
+
+import com.sun.jdi.Value;
 import java.sql.Time;
+import java.util.Date;
 
 public class ReturnModel {
-
     private final int rid;
     private final Date returnDate;
     private final Time returnTime;
-    private final int odometer;
-    private final boolean fullTank;
-    private final double value;
+    private int odometer;
+    private boolean fullTank;
+    private double value;
+    public RentalValue valueDetails;
 
-
-    public ReturnModel(int rid, Date returnDate, Time returnTime, int odometer, boolean fullTank, double value) {
+    public ReturnModel(int rid, Date returnDate, Time returnTime, int odometer, boolean fullTank, double value){
         this.rid = rid;
         this.returnDate = returnDate;
-        this.returnTime =  returnTime;
+        this.returnTime = returnTime;
         this.odometer = odometer;
         this.fullTank = fullTank;
         this.value = value;

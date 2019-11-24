@@ -1,6 +1,6 @@
 package ca.ubc.cs304.model;
-import java.sql.Time;
 import java.sql.Date;
+import java.sql.Time;
 
 
 public class RentModel {
@@ -11,21 +11,22 @@ public class RentModel {
     private final Time fromTime;
     private final Date toDate;
     private final Time toTime;
+    private final String location;
     private final int odometer;
     private final String cardName;
     private final int cardNo;
     private final Date expDate;
     private final int confNo;
 
-    public RentModel(int rid,int vid, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, int odometer,
-                     String cardName, int cardNo, Date expDate, int confNo) {
+    public RentModel(int rid, int vid, String dlicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location, int odometer, String cardName, int cardNo, Date expDate, int confNo){
         this.rid = rid;
         this.vid = vid;
-        this.dLicense = dLicense;
+        this.dlicense = dLicense;
         this.fromDate = fromDate;
         this.fromTime = fromTime;
         this.toDate = toDate;
         this.toTime = toTime;
+        this.location = location;
         this.odometer = odometer;
         this.cardName = cardName;
         this.cardNo = cardNo;
@@ -60,6 +61,10 @@ public class RentModel {
         return toTime;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
     public int getOdometer() {
         return odometer;
     }
@@ -80,5 +85,3 @@ public class RentModel {
         return confNo;
     }
 }
-
-
