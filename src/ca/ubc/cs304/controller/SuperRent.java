@@ -10,10 +10,7 @@ import ca.ubc.cs304.ui.SuperRentTerminalTransactions;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Time;
+import java.sql.*;
 
 /**
  * This is the main controller class that will orchestrate everything.
@@ -133,7 +130,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         }
     }
 
-    public void generateRentalsReport(Date date) {
+    public void generateRentalsReport(Timestamp date) {
         DailyRentalReportModel[] dailyRentalReportModels = dbHandler.generateRentalsReport(date);
         DailyRentalReportPerBranchModel[] dailyRentalReportPerBranchModels = dbHandler.generateRentalsReportPerBranch(date);
         int newRentals = dbHandler.generateTotalNewRental(date);
@@ -161,7 +158,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         System.out.println("Total New Rentals on " + date + " : " + newRentals);
     }
 
-    public void generateRentalsBranchReport(Date date, String branch) {
+    public void generateRentalsBranchReport(Timestamp date, String branch) {
         DailyRentalReportModel[] dailyRentalReportModels = dbHandler.generateRentalsReportByBranch(date, branch);
         int newRentals = dbHandler.generateTotalNewRentalbyBranch(date, branch);
         int totalOfBranch = dbHandler.generateTotalRentalbyBranch(date, branch);
@@ -180,7 +177,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         System.out.println("Total Rentals of Branch: " + totalOfBranch);
     }
 
-    public void generateReturnsReport(Date date) {
+    public void generateReturnsReport(Timestamp date) {
         DailyReturnReportModel[] dailyReturnReportModels = dbHandler.generateReturnsReport(date);
         DailyReturnReportPerBranchModel[] dailyReturnReportPerBranchModels = dbHandler.generateReturnsReportPerBranch(date);
         int totalEarning = dbHandler.generateTotalDailyEarning(date);
@@ -213,7 +210,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         System.out.println("Total Earning of Company on " + date + " : " + totalEarning);
     }
 
-    public void generateReturnsBranchReport(Date date, String branch) {
+    public void generateReturnsBranchReport(Timestamp date, String branch) {
         DailyReturnReportModel[] dailyReturnReportModels = dbHandler.generateReturnsReportByBranch(date, branch);
         int totalReturnsOfBranch = dbHandler.generateTotalReturnByBranch(date, branch);
         int totalEarningOfBranch = dbHandler.generateTotalDailyEarningByBranch(date, branch);

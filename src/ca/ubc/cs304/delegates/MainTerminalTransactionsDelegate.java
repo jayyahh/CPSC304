@@ -4,6 +4,7 @@ import ca.ubc.cs304.model.VehicleModel;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * This interface uses the delegation design pattern where instead of having
@@ -19,10 +20,10 @@ public interface MainTerminalTransactionsDelegate {
     public void rentVehicle(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location);
     public void reserveVehicle(String carType, String dLicense, Date startDate, Time startTime, Date endDate, Time endTime, String location);
     public void returnVehicle(int rid, Date returnDate, Time returnTime, int odometerReading, boolean isTankFull);
-    public void generateRentalsReport(Date date);
-    public void generateRentalsBranchReport(Date date, String branch);
-    public void generateReturnsReport(Date date);
-    public void generateReturnsBranchReport(Date date, String branch);
+    public void generateRentalsReport(Timestamp date);
+    public void generateRentalsBranchReport(Timestamp date, String branch);
+    public void generateReturnsReport(Timestamp date);
+    public void generateReturnsBranchReport(Timestamp date, String branch);
 
     public void terminalTransactionsFinished();
 }

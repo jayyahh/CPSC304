@@ -39,12 +39,12 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate overall rentals report, group by branch and vehicle type
-	public DailyRentalReportModel[] generateRentalsReport(Date date) {
+	public DailyRentalReportModel[] generateRentalsReport(Timestamp date) {
 		ArrayList<DailyRentalReportModel> result = new ArrayList<DailyRentalReportModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, V.vtname, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND R.toDateTime >= ? GROUP BY V.location, V.vtname");
-			ps.setDate(1, date);
-			ps.setDate(2, date);
+			ps.setTimestamp(1, date);
+			ps.setTimestamp(2, date);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyRentalReportModel report = new DailyRentalReportModel();
@@ -62,12 +62,12 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate overall rentals report, group by branch
-	public DailyRentalReportPerBranchModel[] generateRentalsReportPerBranch(Date date) {
+	public DailyRentalReportPerBranchModel[] generateRentalsReportPerBranch(Timestamp date) {
 		ArrayList<DailyRentalReportPerBranchModel> result = new ArrayList<DailyRentalReportPerBranchModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND R.toDateTime >= ? GROUP BY V.location");
-			ps.setDate(1, date);
-			ps.setDate(2, date);
+			ps.setTimestamp(1, date);
+			ps.setTimestamp(2, date);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyRentalReportPerBranchModel report = new DailyRentalReportPerBranchModel();
@@ -84,11 +84,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate new rental across all branches of the day
-	public int generateTotalNewRental(Date date) {
+	public int generateTotalNewRental(Timestamp date) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalNew FROM Rent R WHERE R.fromDateTime = ?");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalNew");
@@ -102,12 +102,12 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate overall rentals report by branch, group by vehicle type
-	public DailyRentalReportModel[] generateRentalsReportByBranch(Date date, String branch) {
+	public DailyRentalReportModel[] generateRentalsReportByBranch(Timestamp date, String branch) {
 		ArrayList<DailyRentalReportModel> result = new ArrayList<DailyRentalReportModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.vtname, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND R.toDateTime >= ? AND V.location = ? GROUP BY V.vtname");
-			ps.setDate(1, date);
-			ps.setDate(2, date);
+			ps.setTimestamp(1, date);
+			ps.setTimestamp(2, date);
 			ps.setString(3, branch);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -125,11 +125,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate new rental of a branch of the day
-	public int generateTotalNewRentalbyBranch(Date date, String branch) {
+	public int generateTotalNewRentalbyBranch(Timestamp date, String branch) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalNew FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime = ? AND V.location = ?");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ps.setString(2, branch);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
@@ -144,12 +144,12 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate total rental of a branch
-	public int generateTotalRentalbyBranch(Date date, String branch) {
+	public int generateTotalRentalbyBranch(Timestamp date, String branch) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND ? <= R.toDateTime  AND V.location = ?");
-			ps.setDate(1, date);
-			ps.setDate(2, date);
+			ps.setTimestamp(1, date);
+			ps.setTimestamp(2, date);
 			ps.setString(3, branch);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
@@ -164,11 +164,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate overall returns report, group by branch and vehicle type
-	public DailyReturnReportModel[] generateReturnsReport(Date date) {
+	public DailyReturnReportModel[] generateReturnsReport(Timestamp date) {
 		ArrayList<DailyReturnReportModel> result = new ArrayList<DailyReturnReportModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? GROUP BY V.location, V.vtname");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyReturnReportModel report = new DailyReturnReportModel();
@@ -187,11 +187,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate subtotal returns report of all branches
-	public DailyReturnReportPerBranchModel[] generateReturnsReportPerBranch(Date date) {
+	public DailyReturnReportPerBranchModel[] generateReturnsReportPerBranch(Timestamp date) {
 		ArrayList<DailyReturnReportPerBranchModel> result = new ArrayList<DailyReturnReportPerBranchModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, COUNT(Ret.rid) AS totalReturnCount, SUM(Ret.value) AS totalBranchValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? GROUP BY V.location");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyReturnReportPerBranchModel report = new DailyReturnReportPerBranchModel();
@@ -209,11 +209,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate total daily earning across all branches
-	public int generateTotalDailyEarning(Date date){
+	public int generateTotalDailyEarning(Timestamp date){
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT SUM(R.value) AS totalNew FROM Return R WHERE R.returnDateTime = ?");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalNew");
@@ -227,11 +227,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate total number of new returns of this date, across all branches
-	public int generateTotalNewReturn(Date date) {
+	public int generateTotalNewReturn(Timestamp date) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalNew FROM Return R WHERE R.returnDateTime = ?");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalNew");
@@ -245,11 +245,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate overal returns report of a branch, group by date
-	public DailyReturnReportModel[] generateReturnsReportByBranch(Date date, String branch) {
+	public DailyReturnReportModel[] generateReturnsReportByBranch(Timestamp date, String branch) {
 		ArrayList<DailyReturnReportModel> result = new ArrayList<DailyReturnReportModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? AND V.location = ? GROUP BY V.vtname");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ps.setString(2, branch);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -268,11 +268,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate total returns by branch
-	public int generateTotalReturnByBranch(Date date, String location) {
+	public int generateTotalReturnByBranch(Timestamp date, String location) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(Ret.rid) AS totalReturnOfBranch FROM Return Ret, Rent Ren, Vehicle V WHERE Ret.returnDateTime = ? AND V.location = ? AND Ret.rid = Ren.rid AND Ren.vid = V.vid");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ps.setString(2, location);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
@@ -287,11 +287,11 @@ public class DatabaseConnectionHandler {
 	}
 
 	// Generate total earning by a branch
-	public int generateTotalDailyEarningByBranch(Date date, String location) {
+	public int generateTotalDailyEarningByBranch(Timestamp date, String location) {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT SUM(Ret.value) AS totalBranchEarning FROM Return Ret, Rent Ren, Vehicle V WHERE Ret.returnDateTime = ? AND V.location = ? AND Ret.rid = Ren.rid AND Ren.vid = V.vid");
-			ps.setDate(1, date);
+			ps.setTimestamp(1, date);
 			ps.setString(2, location);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
