@@ -15,10 +15,10 @@ import java.sql.Time;
  * Bank is the actual class that will implement the methods.
  */
 public interface MainTerminalTransactionsDelegate {
-    public void showAvailableVehicles(String carType, String location, Date startDate, Time startTime, Date endDate, Time endTime);
+    public void showAvailableVehicles(String location, Date startDate, Date endDate, String carType);
     public void rentVehicle(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location);
-    public void reserveVehicle(String carType, String dLicense, String location, Date startDate, Time startTime, Date endDate, Time endTime);
-    public void returnVehicle();
+    public void reserveVehicle(String carType, String dLicense, Date startDate, Time startTime, Date endDate, Time endTime, String location);
+    public void returnVehicle(int rid, Date returnDate, Time returnTime, int odometerReading, boolean isTankFull);
     public void generateRentalsReport(Date date);
     public void generateRentalsBranchReport(Date date, String branch);
     public void generateReturnsReport(Date date);
