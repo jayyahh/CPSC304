@@ -32,5 +32,4 @@ public class ReturnModel {
     public boolean getFullTank() {return this.fullTank;}
 
     public double getValue(){return this.value;}
-
 }

@@ -65,4 +65,16 @@ public class VehicleModel {
     public String getFuelType() {
         return this.fuelType;
     }
+
+    public int getYear() {
+        return year;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public int getOdometer() {
+        return odometer;
+    }
 }
