@@ -4,11 +4,11 @@ public class RentalValue {
 
     public int numDays;
     public int numHours;
-    public float rateValue;
-    public float kmValue;
-    public float insuranceValue;
-    public float totalValue;
-    public float tankRate;
+    public double rateValue;
+    public double kmValue;
+    public double insuranceValue;
+    public double totalValue;
+    public double tankRate;
 
     public RentalValue(){
 

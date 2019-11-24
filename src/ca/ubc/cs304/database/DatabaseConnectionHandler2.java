@@ -4,6 +4,7 @@ import ca.ubc.cs304.model.*;
 import com.sun.jdi.Value;
 
 import javax.swing.plaf.nimbus.State;
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -50,56 +51,57 @@ public class DatabaseConnectionHandler2 {
 		}
 	}
 
-	public void createCustomer(int dLicense, String name, String address, String phone){
+	public void createCustomer(String dLicense, String name, String address, String phone){
 		CustomerModel model = new CustomerModel(phone,name,address, dLicense);
 		//insert("Customer", model);
 	}
 
-
-
-	public ReservationModel makeReservation (String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location){
-		try{
+	public boolean checkCustomer(String dLicense) throws SQLException {
+		try {
 			PreparedStatement stmt = connection.prepareStatement("select * from customer where dlicense = ?");
 			stmt.setString(1, dLicense);
 			ResultSet rs = stmt.executeQuery();
-			if (!rs.next()){
-				//CreateCustomer();
+			if (!rs.next()) {
+				return false;
 			}
+			stmt.close();
+			rs.close();
+			return true;
+		}
+		catch (SQLException e) {
 
-			VehicleModel[] availableCars = getAvailableCarInfo(location, fromDate, toDate, vtname);
-			if (availableCars.length == 0){
-				//prompt user to try again - check in controller
-				return new ReservationModel(0,null,null,null,null,null,null,null );
-			}
+			throw new SQLException(e.getMessage());
+		}
+	}
+
+
+
+	public ReservationModel makeReservation (String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String location) throws SQLException {
+		//try{
 
 			int confNo = getConfNo();
 
 			ReservationModel model = new ReservationModel(confNo, vtname, dLicense, fromDate, fromTime, toDate, toTime, location);
 			//insert("Reservation", ReservationModel);
 
-			stmt.close();
-			rs.close();
-			connection.close();
 
 			return model;
-//
-//			//move this stuff to controller
-//			System.out.println("Reservation Completed!");
-//			System.out.println("Confirmation number: " + confNo);
 
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-		}
+//		} catch (SQLException e) {
+//			throw new SQLException(e.getMessage());
+//		}
 	}
 
-	public RentModel rentAVehicleWithoutReservation(String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location){
+	public RentModel rentAVehicleWithoutReservation(String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location) throws SQLException {
 		ReservationModel model = makeReservation(vtname, dLicense, fromDate, fromTime, toDate, toTime,location);
 		RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), dLicense, cardName, cardNo, expDate);
 		return rentModel;
 
 	}
 
-	public RentModel rentAVehicleWithReservation(int confNo, String dLicense,  String cardName, int cardNo, Date expDate){
+
+
+	public RentModel rentAVehicleWithReservation(int confNo, String dLicense,  String cardName, int cardNo, Date expDate) throws SQLException {
 		try{
 			PreparedStatement reso = connection.prepareStatement("select * from reservation where confNo = ?");
 			reso.setInt (1, confNo);
@@ -143,10 +145,10 @@ public class DatabaseConnectionHandler2 {
 
 			connection.commit();
 
-			return RentModel;
+			return model;
 
 		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			throw new SQLException(e.getMessage());
 		}
 	}
 
@@ -166,10 +168,10 @@ public class DatabaseConnectionHandler2 {
 			ps.setString(5, vtName);
 
 			ResultSet rs = ps.executeQuery();
-//number of vehicles
+
 			while(rs.next()) {
 				VehicleModel model = new VehicleModel(rs.getInt("vid"),
-													rs.getInt("vLicense"),
+													rs.getString("vLicense"),
 													rs.getString("make"),
 													rs.getString("model"),
 													rs.getInt("year"),
@@ -188,47 +190,58 @@ public class DatabaseConnectionHandler2 {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 
-		//numVehicles in controller
 		return result.toArray(new VehicleModel[result.size()]);
 	}
 
-	public ReturnModel returnVehicle(int rid, Date returnDate, Time returnTime, int odometerReading, boolean isTankFull){
+	public ResultSet checkValidRentalId(int rid) throws SQLException {
 		try{
-			PreparedStatement rental = connection.prepareStatement("select * from rent where rid = ?");
-			rental.setInt (1, rid);
-			ResultSet rs = rental.executeQuery();
+		PreparedStatement rental = connection.prepareStatement("select * from rent where rid = ?");
+		rental.setInt (1, rid);
+		ResultSet rs = rental.executeQuery();
+		return rs;
+		}
+		catch (SQLException e) {
+			throw new SQLException(e.getMessage());
+		}
+	}
 
-			if (!rs.next()){
-			//does this work?
-				System.out.println("Error - Invalid confirmation number, please retry");
-			}
+	public ReturnModel returnVehicle(int rid, Date returnDate, Time returnTime, int odometerReading, boolean isTankFull, ResultSet rs) throws SQLException {
+		try{
 
 			Date fromDate = rs.getDate("fromDate");
 			Time fromTime = rs.getTime("fromTime");
 			int beginningOdometer = rs.getInt("odometer");
 			String vtName = rs.getString("vtname");
+			int vid = rs.getInt("vid");
 
 			PreparedStatement vt = connection.prepareStatement("update VehicleType set numAvail = numAvail + 1 where vtname = ?");
 			vt.setString (1, vtName);
 			vt.executeUpdate();
 
+			PreparedStatement updateCar = connection.prepareStatement("update Vehicle set status = 'Available' where vid = ?");
+			updateCar.setInt(1,vid);
+			updateCar.executeUpdate();
+
 			RentalValue value = calculateValue(fromDate, fromTime, returnDate, returnTime, vtName, beginningOdometer, odometerReading, isTankFull);
 			ReturnModel model = new ReturnModel(rid,returnDate,returnTime,odometerReading,isTankFull, value.totalValue );
 			//insert("Return",model);
 
+			rs.close();
+			vt.close();
+			updateCar.close();
+			connection.commit();
+
 			model.valueDetails = value;
 			return model;
 
-
-
 		}
 		catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			throw new SQLException((e.getMessage()));
 		}
 
 	}
 
-	public RentalValue calculateValue(Date fromDate, Time fromTime, Date returnDate, Time returnTime, String vtname, int bOdmtr, int eOdmtr, boolean tankFull){
+	public RentalValue calculateValue(Date fromDate, Time fromTime, Date returnDate, Time returnTime, String vtname, int bOdmtr, int eOdmtr, boolean tankFull) throws SQLException {
 
 		RentalValue value= new RentalValue();
 		long days = ChronoUnit.DAYS.between(fromDate.toLocalDate(), returnDate.toLocalDate());
@@ -238,18 +251,18 @@ public class DatabaseConnectionHandler2 {
 			PreparedStatement vt = connection.prepareStatement("select * from VehicleType where vtname = ?");
 			vt.setString(1, vtname);
 			ResultSet rs = vt.executeQuery();
-			float dayRate = rs.getFloat("drate");
-			float weekRate = rs.getFloat("wrate");
-			float hourRate = rs.getFloat("hrate");
-			float dayInsRate = rs.getFloat("dirate");
-			float weekInsRate = rs.getFloat("wirate");
-			float hourInsRate = rs.getFloat("hirate");
-			float krate = rs.getFloat("krate");
+			double dayRate = rs.getDouble("drate");
+			double weekRate = rs.getDouble("wrate");
+			double hourRate = rs.getDouble("hrate");
+			double dayInsRate = rs.getDouble("dirate");
+			double weekInsRate = rs.getDouble("wirate");
+			double hourInsRate = rs.getDouble("hirate");
+			double krate = rs.getDouble("krate");
 
-			float rate = 0;
-			float insRate = 0;
-			float kmRate = 0;
-			float tankRate = 0;
+			double rate = 0;
+			double insRate = 0;
+			double kmRate = 0;
+			double tankRate = 0;
 
 			if (!tankFull){
 				tankRate += 100;
@@ -291,11 +304,8 @@ public class DatabaseConnectionHandler2 {
 
 			return value;
 		}
-
-
-
 		catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			throw new SQLException(e.getMessage());
 		}
 	}
 
