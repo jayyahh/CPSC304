@@ -14,10 +14,8 @@ public class VehicleModel {
     private final String city;
     private final String fuelType;
 
-
     public VehicleModel(int vid, String vLicense, String make, String model, String year, String color, int odometer, String status,
                         String vt, String locn, String city, String fuelType) {
-
         this.vid = vid;
         this.vLicense = vLicense;
         this.make = make;
@@ -30,7 +28,6 @@ public class VehicleModel {
         this.locn = locn;
         this.city = city;
         this.fuelType = fuelType;
-
     }
 
     public int getVid(){
