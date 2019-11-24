@@ -621,7 +621,6 @@ public class DatabaseConnectionHandler {
 					ps = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?)");
 					ps.setString(1, customer.getdLicense());
 					ps.setString(2, customer.getName());
-					System.out.println("IT COMES HERE NIGGA");
 					ps.setString(3, customer.getAddress());
 					ps.setString(4, customer.getCellPhone());
 
