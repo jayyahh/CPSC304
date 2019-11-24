@@ -54,8 +54,8 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         }
     }
 
-    public void showAvailableVehicles(String location, Date startDate, Date endDate, String carType) {
-        VehicleModel[] result = dbHandler.getAvailableCarInfo(location, startDate, endDate, carType);
+    public void showAvailableVehicles(String location, Timestamp startDateTime, Timestamp endDateTime, String carType) {
+        VehicleModel[] result = dbHandler.getAvailableCarInfo(location, startDateTime, endDateTime, carType);
         if (result.length == 0){
             System.out.println("No available vehicles for selected dates!");
             transaction.showMainMenu(this);
@@ -83,12 +83,12 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         }
     }
 
-    public void rentVehicle(int confNo, String vtname, String dLicense, Date fromDate, Time fromTime, Date toDate, Time toTime, String name, String cardName, int cardNo, Date expDate, String location)
+    public void rentVehicle(int confNo, String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location)
     {
         RentModel model;
         try{
             if (confNo == 0) {
-                model = dbHandler.rentAVehicleWithoutReservation(vtname, dLicense, fromDate, fromTime, toDate, toTime, name, cardName, cardNo, expDate, location);
+                model = dbHandler.rentAVehicleWithoutReservation(vtname, dLicense, fromDateTime,toDateTime, name, cardName, cardNo, expDate, location);
             }
             else {
                 model = dbHandler.rentAVehicleWithReservation(confNo, dLicense, cardName, cardNo, expDate);
@@ -105,7 +105,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         }
     }
 
-    public void reserveVehicle(String carType, String dLicense, Date startDate, Time startTime, Date endDate, Time endTime, String location) {
+    public void reserveVehicle(String carType, String dLicense, Timestamp startDateTime, Timestamp endDateTime, String location) {
         ReservationModel model;
         try {
             if (!dbHandler.checkCustomer(dLicense)){
@@ -117,11 +117,11 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
                 dbHandler.createCustomer(license, name, address, phone);
             }
 
-            if(dbHandler.getAvailableCarInfo(location,startDate,endDate,carType).length == 0){
+            if(dbHandler.getAvailableCarInfo(location,startDateTime,endDateTime,carType).length == 0){
                 System.out.print("No cars available for the selected inputs! Please try again");
                 transaction.showMainMenu(this);
             }
-            model = dbHandler.makeReservation(carType, dLicense, startDate, startTime, endDate, endTime, location);
+            model = dbHandler.makeReservation(carType, dLicense, startDateTime, endDateTime, location);
             System.out.print("Reservation completed!");
             System.out.println("ConfirmationNo: " +  model.getConfNo());
 
@@ -231,7 +231,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         System.out.println("Total Earning of branch " + branch + " on " + date + " : " + totalEarningOfBranch);
     }
 
-    public void returnVehicle(int rid, Date returnDate, Time returnTime, int odometerReading, boolean isTankFull){
+    public void returnVehicle(int rid, Timestamp returnDateTime, int odometerReading, boolean isTankFull){
         ReturnModel model;
         try{
 
@@ -242,11 +242,11 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
                 //retry, break out of thing
             }
 
-            model = dbHandler.returnVehicle(rid, returnDate,returnTime,odometerReading,isTankFull,rs);
+            model = dbHandler.returnVehicle(rid, returnDateTime, odometerReading,isTankFull,rs);
             //print out receipt
             System.out.println("Return completed!");
             System.out.println("Rid: " +  model.getRid());
-            System.out.println("Rental Returned: " +  model.getReturnTime() + model.getReturnDate());
+            System.out.println("Rental Returned: " +  model.getReturnDate());
             System.out.println("Rental Days: " +  model.valueDetails.numDays);
             System.out.println("Total Cost: $" + model.getValue());
             System.out.println("Cost breakdown: ");
