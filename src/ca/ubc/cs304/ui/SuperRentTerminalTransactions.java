@@ -281,8 +281,8 @@ public class SuperRentTerminalTransactions {
 
     private int selectYear() {
         int choice = INVALID_INPUT;
-        while (choice < 2019 || choice > 2030) {
-            System.out.println("Valid year between 2019 and 2030: ");
+        while (choice < 2000 || choice > 3000) {
+            System.out.println("Valid year between 2000 and 3000 ");
             choice = readInteger(false);
         }
         return choice;
