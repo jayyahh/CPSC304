@@ -497,15 +497,12 @@ try{
 			PreparedStatement vt = connection.prepareStatement("update VehicleType set numAvail = numAvail + 1 where vtname = ?");
 			vt.setString (1, vtName);
 			vt.executeUpdate();
-
 			PreparedStatement updateCar = connection.prepareStatement("update Vehicle set status = 'Available' where vid = ?");
 			updateCar.setInt(1,vid);
 			updateCar.executeUpdate();
-
 			RentalValue value = calculateValue(fromDateTime, returnDateTime, vtName, beginningOdometer, odometerReading, isTankFull);
 			ReturnModel model = new ReturnModel(rid,returnDateTime,odometerReading,isTankFull, value.totalValue );
 			insert("Return",model);
-
 			rs.close();
 			vt.close();
 			updateCar.close();
@@ -532,6 +529,8 @@ try{
 			PreparedStatement vt = connection.prepareStatement("select * from VehicleType where vtname = ?");
 			vt.setString(1, vtname);
 			ResultSet rs = vt.executeQuery();
+
+            rs.next();
 			double dayRate = rs.getDouble("drate");
 			double weekRate = rs.getDouble("wrate");
 			double hourRate = rs.getDouble("hrate");
