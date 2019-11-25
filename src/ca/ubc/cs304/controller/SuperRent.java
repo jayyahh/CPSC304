@@ -425,7 +425,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
     }
 
     public void updateTable(String tableName, String primaryKeyColName, String primaryKey, String colName, String condition, boolean updateIntValue) {
-        dbHandler.update(tableName, primaryKeyColName, primaryKey, colName, condition, updateIntValue);
+        dbHandler.update(tableName, primaryKeyColName, primaryKey, colName, condition);
         System.out.println("Done");
     }
 

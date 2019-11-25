@@ -315,7 +315,7 @@ public class SuperRentTerminalTransactions {
     }
 
     private void showAvailableVehicles() throws SQLException {
-        String carType = selectCarType();
+        String carType = selectCarTypeAll();
         String location = selectLocation();
         Date startDate = selectDate("start");
         Timestamp startTS = convertToSqlTimeStamp(startDate,12,30);
@@ -623,7 +623,7 @@ public class SuperRentTerminalTransactions {
         return location;
     }
 
-    private String selectCarType() {
+    private String selectCarTypeAll() {
         String carType = "";
         int choice = INVALID_INPUT;
         System.out.println();
@@ -680,6 +680,58 @@ public class SuperRentTerminalTransactions {
         return carType;
     }
 
+    private String selectCarType() {
+        String carType = "";
+        int choice = INVALID_INPUT;
+        System.out.println();
+        System.out.println("Please select one of the following car types: ");
+        System.out.println("1. Economy");
+        System.out.println("2. Compact");
+        System.out.println("3. Mid-size");
+        System.out.println("4. Standard");
+        System.out.println("5. Full-size");
+        System.out.println("6. SUV");
+        System.out.println("7. Truck");
+        System.out.println("8. Quit");
+        while (choice < 0 || choice > 8) {
+            choice = readInteger(true);
+            if (choice != INVALID_INPUT) {
+                switch (choice) {
+                    case 0:
+                        carType = "Any";
+                        break;
+                    case 1:
+                        carType = "Economy";
+                        break;
+                    case 2:
+                        carType = "Compact";
+                        break;
+                    case 3:
+                        carType = "Mid-size";
+                        break;
+                    case 4:
+                        carType = "Standard";
+                        break;
+                    case 5:
+                        carType = "Full-size";
+                        break;
+                    case 6:
+                        carType = "SUV";
+                        break;
+                    case 7:
+                        carType = "Truck";
+                        break;
+                    case 8:
+                        handleQuitOption();
+                        break;
+                    default:
+                        System.out.println(WARNING_TAG + " The number that you entered was not a valid option.");
+                        break;
+                }
+            }
+        }
+        return carType;
+    }
     public void handleQuitOption() {
         System.out.println("Good Bye!");
 
