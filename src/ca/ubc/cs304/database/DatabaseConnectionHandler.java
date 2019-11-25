@@ -13,8 +13,7 @@ public class DatabaseConnectionHandler {
 	private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
 	private static final String EXCEPTION_TAG = "[EXCEPTION]";
 	private static final String WARNING_TAG = "[WARNING]";
-	private int uniqueRId = 0;
-	private int uniqueConfNo = 1000000;
+
 
 	private Connection connection = null;
 	
@@ -305,13 +304,6 @@ public class DatabaseConnectionHandler {
 		return totalNew;
 	}
 
-	public int getRId(){
-		return uniqueRId++;
-	}
-
-	public int getConfNo(){
-		return uniqueConfNo++;
-	}
 
 	public void createCustomer(String dLicense, String name, String address, String phone){
 		CustomerModel model = new CustomerModel(phone,name,address, dLicense);
@@ -359,14 +351,14 @@ try{
 
 	public RentModel rentAVehicleWithoutReservation(String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location) throws SQLException {
 		try{ReservationModel model = makeReservation(vtname, dLicense, fromDateTime, toDateTime,location);
-		RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), dLicense, cardName, cardNo, expDate);
+		RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), cardName, cardNo, expDate);
 		return rentModel;}
 		catch (SQLException e){
 			throw new SQLException(e.getMessage());
 		}
 	}
 
-	public RentModel rentAVehicleWithReservation(int confNo, String dLicense,  String cardName, int cardNo, Timestamp expDate) throws SQLException {
+	public RentModel rentAVehicleWithReservation(int confNo,  String cardName, int cardNo, Timestamp expDate) throws SQLException {
 		try{
 			PreparedStatement reso = connection.prepareStatement("select * from reservation where confNo = ?");
 			reso.setInt (1, confNo);
@@ -381,6 +373,7 @@ try{
 			Timestamp fromDateTime = rs.getTimestamp("fromDateTime");
 			Timestamp toDateTime = rs.getTimestamp("toDateTime");
 			String location = rs.getString("location");
+			String dlicense = rs.getString("dlicense");
 
 			PreparedStatement car = connection.prepareStatement("select * from vehicle where location = ? and vtname = ? and status = ?");
 			car.setString(1, location);
@@ -398,7 +391,7 @@ try{
 			defaultRid = 1 + rs2.getInt("rids");
 			}
 
-			RentModel model = new RentModel(defaultRid, vid, dLicense, fromDateTime, toDateTime, location, odometer, cardName, cardNo, expDate, confNo);
+			RentModel model = new RentModel(defaultRid, vid, dlicense, fromDateTime, toDateTime, location, odometer, cardName, cardNo, expDate, confNo);
 			insert("Rent", model);
 
 			PreparedStatement vtType = connection.prepareStatement("update VehicleType set numAvail = numAvail - 1 where vtname = ?");
