@@ -390,7 +390,7 @@ transaction.showMainMenu(this);
         System.out.printf("%-20.20s", vtm.getDiRate());
         System.out.printf("%-20.20s", vtm.getHiRate());
         System.out.printf("%-20.20s", vtm.getKRate());
-
+        System.out.printf("%-20.20s", vtm.getNumAvail());
         System.out.println();
     }
 

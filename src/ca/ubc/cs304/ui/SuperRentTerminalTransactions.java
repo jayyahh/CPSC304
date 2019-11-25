@@ -131,7 +131,8 @@ public class SuperRentTerminalTransactions {
         double di = Double.parseDouble(enterAny("daily insurance"));
         double hi = Double.parseDouble(enterAny("hourly insurance"));
         double kr = Double.parseDouble(enterAny("per kilometer rate"));
-        VehicleTypeModel vtm = new VehicleTypeModel(vtName, features, wr, dr, hr, wi,di,hi,kr);
+        double numAva = Double.parseDouble(enterAny("number available"));
+        VehicleTypeModel vtm = new VehicleTypeModel(vtName, features, wr, dr, hr, wi,di,hi,kr, numAva);
         delegate.insertIntoTable("VehicleType", vtm);
     }
 

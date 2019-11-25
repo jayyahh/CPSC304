@@ -588,17 +588,21 @@ public class DatabaseConnectionHandler {
 
 	public void delete(String tableName, String id, String idColName) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("DELETE FROM Customer WHERE name = ?");
-			//ps.setString(1, tableName);
+			String updateString = "DELETE FROM " + tableName + " WHERE " + idColName + " = ? ";
+			PreparedStatement ps = connection.prepareStatement(updateString);
 
-			//ps.setString(2, idColName);
-
-			if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
-				ps.setString(3, id);
-			}
-			else {
+			if (idColName.equals("vid") || idColName.equals("odometer") || idColName.equals("confNo") || idColName.equals("rid")) {
 				int idAsInt = Integer.parseInt(id);
 				ps.setInt(1, idAsInt);
+			}
+
+			else if (idColName.equals("wrate") || idColName.equals("drate") || idColName.equals("hrate") || idColName.equals("wirate") ||
+					idColName.equals("dirate") || idColName.equals("hirate") || idColName.equals("krate")) {
+				double idAsDouble = Double.parseDouble(id);
+				ps.setDouble(1, idAsDouble);
+			}
+			else {
+				ps.setString(1,id);
 			}
 
 			int rowCount = ps.executeUpdate();
@@ -613,6 +617,7 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}
 	}
+
 
 	/** Dynamically constructs an insert statement based on given object*/
 	public void insert(String tableName, Object o) {
@@ -703,7 +708,7 @@ public class DatabaseConnectionHandler {
 					break;
 				case "VehicleType":
 					VehicleTypeModel vType = (VehicleTypeModel) Class.forName("ca.ubc.cs304.model.VehicleTypeModel").cast(o);
-					ps = connection.prepareStatement("INSERT INTO VehicleType VALUES (?,?,?,?,?,?,?,?)");
+					ps = connection.prepareStatement("INSERT INTO VehicleType VALUES (?,?,?,?,?,?,?,?,?)");
 					ps.setString(1, vType.getVtname());
 					ps.setString(2, vType.getFeatures());
 					ps.setDouble(3, vType.getWRate());
@@ -712,6 +717,7 @@ public class DatabaseConnectionHandler {
 					ps.setDouble(6, vType.getDiRate());
 					ps.setDouble(7, vType.getHiRate());
 					ps.setDouble(8,vType.getKRate());
+					ps.setDouble(9, vType.getNumAvail());
 
 					ps.executeUpdate();
 					connection.commit();
@@ -799,8 +805,8 @@ public class DatabaseConnectionHandler {
 								rs.getString("color"),
 								rs.getInt("odometer"),
 								rs.getString("status"),
-								rs.getString("vt"),
-								rs.getString("locn"),
+								rs.getString("vtname"),
+								rs.getString("location"),
 								rs.getString("city"),
 								rs.getString("fuelType"));
 						result.add(v);
@@ -836,9 +842,10 @@ public class DatabaseConnectionHandler {
 								rs.getString("dLicense"),
 								rs.getTimestamp("fromDateTime"),
 								rs.getTimestamp("toDateTime"),
-								rs.getString("location"),
+								"",
 								rs.getInt("odometer"),
-								rs.getString("cardName"), rs.getInt("cardNo"),
+								rs.getString("cardName"),
+								rs.getInt("cardNo"),
 								rs.getTimestamp("ExpDate"),
 								rs.getInt("confNo"));
 						result.add(r);
