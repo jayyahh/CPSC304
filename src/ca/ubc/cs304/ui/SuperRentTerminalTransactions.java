@@ -327,7 +327,7 @@ public class SuperRentTerminalTransactions {
         }
     }
 
-    private void makeReservation() {
+    public void makeReservation() {
         String carType = selectCarType();
         String location = selectLocation();
         Date startDate = selectDate("start");
@@ -346,26 +346,64 @@ public class SuperRentTerminalTransactions {
             handleQuitOption();
         }
     }
-
-    private void rentVehicle() {
-        int confNo = Integer.parseInt(enterAny("confirmation number"));
+    public void rentVehicleWithoutReservation() {
         String carType = selectCarType();
         String location = selectLocation();
-        String dLicense = enterAny("driver's license");
         Date startDate = selectDate("start");
         int startHour = selectHour();
         int startMin = selectMin();
-        Timestamp startDateTime =convertToSqlTimeStamp(startDate,startHour,startMin);
+        Timestamp startDateTime = convertToSqlTimeStamp(startDate,startHour,startMin);
         Date endDate = selectDate("end");
         int endHour = selectHour();
         int endMin = selectMin();
         Timestamp endDateTime = convertToSqlTimeStamp(endDate,endHour,endMin);
+        String dLicense = enterAny("driver's license");
         String name = enterAny("name");
         String cardName = enterAny("name on card");
         int cardNo = Integer.parseInt(enterAny("card number"));
         Date expDate = selectDate("card expiration date");
         Timestamp exp = convertToSqlTimeStamp(expDate,12,30);
-        delegate.rentVehicle(confNo, carType, dLicense,startDateTime,endDateTime, name, cardName, cardNo, exp, location);
+        if (isEndTimeLater(startDateTime, endDateTime)){
+            delegate.rentAVehicleWithoutReservation(carType, dLicense, startDateTime, endDateTime , name, cardName, cardNo, exp,location);
+        } else {
+            System.out.println("End date must be later than start date, quitting program...");
+            handleQuitOption();
+        }
+    }
+
+    public void rentVehicle() {
+        int choice = INVALID_INPUT;
+        while (choice != 3) {
+            System.out.println("Do you have a reservation?");
+            System.out.println("1. Yes");
+            System.out.println("2. No");
+            System.out.println("3. Quit");
+            System.out.print("Please choose one of the above 3 options: ");
+            choice = readInteger(false);
+            System.out.println(" ");
+            if (choice != INVALID_INPUT) {
+                switch (choice) {
+                    case 1:
+                        rentVehicleWithReservation();
+                        break;
+                    case 2:
+                        rentVehicleWithoutReservation();
+                        break;
+                    case 3:
+                        handleQuitOption();
+                        break;
+                    default:
+                        System.out.println(WARNING_TAG + " The number that you entered was not a valid option.");
+                        break;
+    }}}}
+
+    public void rentVehicleWithReservation() {
+        int confNo = Integer.parseInt(enterAny("confirmation number"));
+        String cardName = enterAny("name on card");
+        int cardNo = Integer.parseInt(enterAny("card number"));
+        Date expDate = selectDate("card expiration date");
+        Timestamp exp = convertToSqlTimeStamp(expDate,12,30);
+        delegate.rentVehicleWithReservation(confNo, cardName, cardNo, exp);
     }
 
     private void returnVehicle() {
@@ -434,7 +472,7 @@ public class SuperRentTerminalTransactions {
         boolean ret = false;
         int choice = INVALID_INPUT;
         System.out.println();
-        System.out.println("Please select true or false: ");
+        System.out.println("Is gas tank full?");
         System.out.println("1. True");
         System.out.println("2. False");
         System.out.println("3. Quit");
