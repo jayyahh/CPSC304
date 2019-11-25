@@ -239,10 +239,9 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         try{
 
             ResultSet rs = dbHandler.checkValidRentalId(rid);
-            //while loop?
             if (!rs.next()){
                 System.out.println("Error - Invalid confirmation number, please retry");
-                //retry, break out of thing
+                transaction.showMainMenu(this);
             }
 
             model = dbHandler.returnVehicle(rid, returnDateTime, odometerReading,isTankFull,rs);

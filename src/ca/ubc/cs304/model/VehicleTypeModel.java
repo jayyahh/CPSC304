@@ -12,9 +12,10 @@ public class VehicleTypeModel {
     private final double dirate;
     private final double hirate;
     private final double krate;
+    private final double numAvail;
 
     public VehicleTypeModel(String vtname, String features, double wr, double dr, double hr, double wi,
-                            double di, double hi, double kr) {
+                            double di, double hi, double kr, double numAvail) {
         this.vtname = vtname;
         this.features = features;
         this.wrate = wr;
@@ -24,6 +25,7 @@ public class VehicleTypeModel {
         this.dirate = di;
         this.hirate = hi;
         this.krate = kr;
+        this.numAvail = numAvail;
     }
 
     public String getVtname() {
@@ -47,4 +49,6 @@ public class VehicleTypeModel {
     public double getHiRate(){ return this.hirate; }
 
     public double getKRate(){ return this.krate; }
+
+    public double getNumAvail(){return this.numAvail;}
 }

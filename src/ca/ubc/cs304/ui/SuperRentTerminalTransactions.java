@@ -196,7 +196,7 @@ public class SuperRentTerminalTransactions {
         boolean ret = false;
         int choice = INVALID_INPUT;
         System.out.println();
-        System.out.println("Please select true or false: ");
+        System.out.println("Is gas tank full?");
         System.out.println("1. True");
         System.out.println("2. False");
         System.out.println("3. Quit");
