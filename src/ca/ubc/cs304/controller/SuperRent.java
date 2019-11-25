@@ -79,6 +79,8 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
 
                 System.out.println();
                 System.out.println("Number of available vehicles: " + result.length);
+
+                transaction.showMainMenu(this);
             }
         }
     }

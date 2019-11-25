@@ -440,6 +440,7 @@ public class DatabaseConnectionHandler {
     			// get column name and print it
     			System.out.printf("%-15s", rsmd.getColumnName(i + 1));
     		}
+			System.out.println(" ");
 
 			while(rs.next()) {
 				VehicleModel model = new VehicleModel(rs.getInt("vid"),
@@ -609,6 +610,7 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}
 	}
+
 	/** Dynamically constructs an insert statement based on given object*/
 	public void insert(String tableName, Object o) {
 		try {
