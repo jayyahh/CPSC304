@@ -173,7 +173,7 @@ public class SuperRentTerminalTransactions {
                         break;
                     case 4:
                         Date date4 = selectDate("report");
-                        Timestamp d4 = convertToSqlTimeStamp(date4,00,00);
+                        Timestamp d4 = convertToSqlTimeStamp(date4,00,01);
                         String branch2 = selectLocation();
                         delegate.generateReturnsBranchReport(d4, branch2);
                         break;
@@ -431,7 +431,7 @@ public class SuperRentTerminalTransactions {
     }
     private Timestamp convertToSqlTimeStamp(Date date,int hour, int minute){
         String dateString = date.toString();
-        String timeString = hour+":"+minute+":"+"00";
+        String timeString = hour+":"+minute+":"+"01";
         return Timestamp.valueOf(dateString + " " +timeString);
     }
 
