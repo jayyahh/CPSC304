@@ -159,23 +159,23 @@ public class SuperRentTerminalTransactions {
                 switch (choice) {
                     case 1:
                         Date date1 = selectDate("report");
-                        Timestamp d1 = convertToSqlTimeStamp(date1,12,30);
+                        Timestamp d1 = convertToSqlTimeStamp(date1,00,00);
                         delegate.generateRentalsReport(d1);
                         break;
                     case 2:
                         Date date2 = selectDate("report");
-                        Timestamp d2 = convertToSqlTimeStamp(date2,12,30);
+                        Timestamp d2 = convertToSqlTimeStamp(date2,00,00);
                         String branch1 = selectLocation();
                         delegate.generateRentalsBranchReport(d2, branch1);
                         break;
                     case 3:
                         Date date3 = selectDate("report");
-                        Timestamp d3 = convertToSqlTimeStamp(date3,12,30);
+                        Timestamp d3 = convertToSqlTimeStamp(date3,00,00);
                         delegate.generateReturnsReport(d3);
                         break;
                     case 4:
                         Date date4 = selectDate("report");
-                        Timestamp d4 = convertToSqlTimeStamp(date4,12,30);
+                        Timestamp d4 = convertToSqlTimeStamp(date4,00,00);
                         String branch2 = selectLocation();
                         delegate.generateReturnsBranchReport(d4, branch2);
                         break;
