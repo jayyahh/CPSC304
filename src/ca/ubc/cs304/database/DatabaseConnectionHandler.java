@@ -337,7 +337,7 @@ public class DatabaseConnectionHandler {
 	}
 
 	public ReservationModel makeReservation (String vtname, String dLicense, Timestamp fromDateTime,Timestamp toDateTime, String location) throws SQLException {
-
+try{
 		int defaultConfNo= 1000000;
 		Statement stmt = connection.createStatement();
 		ResultSet rs2 = stmt.executeQuery("select count(distinct confNo)  AS nums from reservation");
@@ -352,12 +352,18 @@ public class DatabaseConnectionHandler {
 		insert("Reservation", model);
 
 		return model;
+	}catch(SQLException e){
+	throw new SQLException(e.getMessage());
+	}
 	}
 
 	public RentModel rentAVehicleWithoutReservation(String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location) throws SQLException {
-		ReservationModel model = makeReservation(vtname, dLicense, fromDateTime, toDateTime,location);
+		try{ReservationModel model = makeReservation(vtname, dLicense, fromDateTime, toDateTime,location);
 		RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), dLicense, cardName, cardNo, expDate);
-		return rentModel;
+		return rentModel;}
+		catch (SQLException e){
+			throw new SQLException(e.getMessage());
+		}
 	}
 
 	public RentModel rentAVehicleWithReservation(int confNo, String dLicense,  String cardName, int cardNo, Timestamp expDate) throws SQLException {
@@ -419,7 +425,7 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public VehicleModel[] getAvailableCarInfo(String location, Timestamp fromDate, Timestamp toDate, String vtName) {
+	public VehicleModel[] getAvailableCarInfo(String location, Timestamp fromDate, Timestamp toDate, String vtName) throws SQLException {
 		ArrayList<VehicleModel> result = new ArrayList<VehicleModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT * FROM Vehicle WHERE status = ? and location = ? and (vtname = ? or (? IS NULL or ? = '')) order by make");
@@ -462,6 +468,7 @@ public class DatabaseConnectionHandler {
 		} catch (SQLException e) {
 			rollbackConnection();
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			throw new SQLException(e.getMessage());
 		}
 
 		return result.toArray(new VehicleModel[result.size()]);
