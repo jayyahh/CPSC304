@@ -242,32 +242,9 @@ public class SuperRentTerminalTransactions {
         String primaryKey = enterAny("Set To Value");
         String colName = enterAny("Condition Column Name");
         String condition = enterAny("Condition Value");
-        boolean updateIntValue = updateIntValueTrueOrFalse();
-        delegate.updateTable(tableName, primaryKeyColName, primaryKey, colName, condition, updateIntValue);
+        delegate.updateTable(tableName, primaryKeyColName, primaryKey, colName, condition, false);
     }
-
-    private boolean updateIntValueTrueOrFalse(){
-        System.out.println("Are you updating an integer value?");
-        boolean ret = false;
-        int choice = INVALID_INPUT;
-        System.out.println("1. True");
-        System.out.println("2. False");
-        while (choice < 1 || choice > 2) {
-            choice = readInteger(false);
-            if (choice != INVALID_INPUT) {
-                switch (choice) {
-                    case 1:
-                        ret = true;
-                        break;
-                    case 2:
-                        ret = false;
-                        break;
-                }
-            }
-        }
-        return ret;
-    }
-
+    
     private String selectTable(){
         String table = "";
         int choice = INVALID_INPUT;
