@@ -638,7 +638,7 @@ try{
 					break;
 				case "Return":
 					ReturnModel returnModel = (ReturnModel) Class.forName("ca.ubc.cs304.model.ReturnModel").cast(o);
-					ps = connection.prepareStatement("INSERT INTO return VALUES (?,?,?,?,?,?)");
+					ps = connection.prepareStatement("INSERT INTO return VALUES (?,?,?,?,?)");
 					ps.setInt(1, returnModel.getRid());
 					ps.setTimestamp(2, returnModel.getReturnDate());
 					ps.setInt(3, returnModel.getOdometer());
@@ -652,7 +652,7 @@ try{
 					break;
 				case "Rent":
 					RentModel rent = (RentModel) Class.forName("ca.ubc.cs304.model.RentModel").cast(o);
-					ps = connection.prepareStatement("INSERT INTO rent VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+					ps = connection.prepareStatement("INSERT INTO rent VALUES (?,?,?,?,?,?,?,?,?,?)");
 					ps.setInt(1, rent.getRid());
 					ps.setInt(2, rent.getVid());
 					ps.setString(3, rent.getdLicense());
@@ -671,7 +671,7 @@ try{
 					break;
 				case "Reservation":
 					ReservationModel reservation = (ReservationModel) Class.forName("ca.ubc.cs304.model.ReservationModel").cast(o);
-					ps = connection.prepareStatement("INSERT INTO reservation VALUES (?,?,?,?,?,?,?,?)");
+					ps = connection.prepareStatement("INSERT INTO reservation VALUES (?,?,?,?,?,?)");
 					ps.setInt(1, reservation.getConfNo());
 					ps.setString(2, reservation.getVtname());
 					ps.setString(3, reservation.getdLicense());
