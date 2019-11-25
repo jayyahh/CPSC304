@@ -16,8 +16,8 @@ public class DatabaseConnectionHandler {
 
 
 	private Connection connection = null;
-	
-	public DatabaseConnectionHandler() {
+
+	public DatabaseConnectionHandler(){
 		try {
 			// Load the Oracle JDBC driver
 			// Note that the path could change for new drivers
@@ -26,7 +26,7 @@ public class DatabaseConnectionHandler {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 	}
-	
+
 	public void close() {
 		try {
 			if (connection != null) {
@@ -356,29 +356,33 @@ public class DatabaseConnectionHandler {
 
 	public ReservationModel makeReservation (String vtname, String dLicense, Timestamp fromDateTime,Timestamp toDateTime, String location) throws SQLException {
 		try{
+
 		int defaultConfNo= 1000000;
 		Statement stmt = connection.createStatement();
 		ResultSet rs2 = stmt.executeQuery("select count(distinct confNo)  AS nums from reservation");
 
-		while(rs2.next()){
-			defaultConfNo = 1000000 + rs2.getInt("nums");
-		}
 
-		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDateTime, toDateTime, location);
+			while(rs2.next()){
+				defaultConfNo = 1000000 + rs2.getInt("nums");
+			}
 
-		insert("Reservation", model);
+
+			ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDateTime, toDateTime, location);
+
+
+			insert("Reservation", model);
 
 		return model;
 
-	}catch(SQLException e) {
-	throw new SQLException(e.getMessage());
-	}
+		}catch(SQLException e) {
+			throw new SQLException(e.getMessage());
+			}
 	}
 
 	public RentModel rentAVehicleWithoutReservation(String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location) throws SQLException {
 		try{ReservationModel model = makeReservation(vtname, dLicense, fromDateTime, toDateTime,location);
-		RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), cardName, cardNo, expDate);
-		return rentModel;}
+			RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), cardName, cardNo, expDate);
+			return rentModel;}
 		catch (SQLException e){
 			throw new SQLException(e.getMessage());
 		}
@@ -407,18 +411,18 @@ public class DatabaseConnectionHandler {
 			car.setString(3, "Available");
 			ResultSet carRs = car.executeQuery();
 			if(!carRs.next()){
-			    System.out.println("No more available cars for selected. Please retry");
-                return new RentModel(0,0,null,null,null,null,0,null,0,null,0);
-            }
+				System.out.println("No more available cars for selected. Please retry");
+				return new RentModel(0,0,null,null,null,null,0,null,0,null,0);
+			}
 			int vid = carRs.getInt("vid");
 			int odometer = carRs.getInt("odometer");
 
-            int defaultRid = 1;
+			int defaultRid = 1;
 			Statement stmt = connection.createStatement();
 			ResultSet rs2 = stmt.executeQuery("select count(distinct rid)  AS rids from rent");
 
 			while(rs2.next()){
-			defaultRid = 1 + rs2.getInt("rids");
+				defaultRid = 1 + rs2.getInt("rids");
 			}
 
 			RentModel model = new RentModel(defaultRid, vid, dlicense, fromDateTime, toDateTime, location, odometer, cardName, cardNo, expDate, confNo);
@@ -547,7 +551,7 @@ public class DatabaseConnectionHandler {
 			vt.setString(1, vtname);
 			ResultSet rs = vt.executeQuery();
 
-            rs.next();
+			rs.next();
 			double dayRate = rs.getDouble("drate");
 			double weekRate = rs.getDouble("wrate");
 			double hourRate = rs.getDouble("hrate");
@@ -608,16 +612,21 @@ public class DatabaseConnectionHandler {
 
 	public void delete(String tableName, String id, String idColName) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("DELETE FROM ? WHERE ? = ?");
-			ps.setString(1, tableName);
-			ps.setString(2, idColName);
+			String updateString = "DELETE FROM " + tableName + " WHERE " + idColName + " = ? ";
+			PreparedStatement ps = connection.prepareStatement(updateString);
 
-			if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
-				ps.setString(3, id);
+			if (idColName.equals("vid") || idColName.equals("odometer") || idColName.equals("confNo") || idColName.equals("rid")) {
+				int idAsInt = Integer.parseInt(id);
+				ps.setInt(1, idAsInt);
+			}
+
+			else if (idColName.equals("wrate") || idColName.equals("drate") || idColName.equals("hrate") || idColName.equals("wirate") ||
+					idColName.equals("dirate") || idColName.equals("hirate") || idColName.equals("krate")) {
+				double idAsDouble = Double.parseDouble(id);
+				ps.setDouble(1, idAsDouble);
 			}
 			else {
-				int idAsInt = Integer.parseInt(id);
-				ps.setInt(3, idAsInt);
+				ps.setString(1,id);
 			}
 
 			int rowCount = ps.executeUpdate();
@@ -632,6 +641,7 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}
 	}
+
 
 	/** Dynamically constructs an insert statement based on given object*/
 	public void insert(String tableName, Object o) throws SQLException {
@@ -742,8 +752,10 @@ public class DatabaseConnectionHandler {
 					ps.setDouble(7, vType.getHiRate());
 					ps.setDouble(8,vType.getKRate());
 					ps.setDouble(9,vType.getNumAvail());
+
 					System.out.println("Query ran: INSERT INTO VehicleType VALUES (" + vType.getVtname()+"," + vType.getFeatures() +","+vType.getWRate()+","+vType.getDRate() +"," + vType.getHRate() +","+vType.getDiRate() +"," +
 							vType.getHiRate() + "," + vType.getKRate() + vType.getNumAvail()+")");
+
 					ps.executeUpdate();
 					connection.commit();
 
@@ -832,8 +844,8 @@ public class DatabaseConnectionHandler {
 								rs.getString("color"),
 								rs.getInt("odometer"),
 								rs.getString("status"),
-								rs.getString("vt"),
-								rs.getString("locn"),
+								rs.getString("vtname"),
+								rs.getString("location"),
 								rs.getString("city"),
 								rs.getString("fuelType"));
 						result.add(v);
@@ -869,9 +881,10 @@ public class DatabaseConnectionHandler {
 								rs.getString("dLicense"),
 								rs.getTimestamp("fromDateTime"),
 								rs.getTimestamp("toDateTime"),
-								rs.getString("location"),
+								"",
 								rs.getInt("odometer"),
-								rs.getString("cardName"), rs.getInt("cardNo"),
+								rs.getString("cardName"),
+								rs.getInt("cardNo"),
 								rs.getTimestamp("ExpDate"),
 								rs.getInt("confNo"));
 						result.add(r);
@@ -903,7 +916,7 @@ public class DatabaseConnectionHandler {
 		ArrayList<String> result = new ArrayList<String>();
 		try {
 			Statement stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT table_name FROM all_tables");
+			ResultSet rs = stmt.executeQuery("SELECT table_name FROM user_tables");
 			while (rs.next()) {
 				result.add(rs.getString("table_name"));
 			}
@@ -921,10 +934,10 @@ public class DatabaseConnectionHandler {
 			if (connection != null) {
 				connection.close();
 			}
-	
+
 			connection = DriverManager.getConnection(ORACLE_URL, username, password);
 			connection.setAutoCommit(false);
-	
+
 			System.out.println("\nConnected to Oracle!");
 			return true;
 		} catch (SQLException e) {
@@ -935,7 +948,7 @@ public class DatabaseConnectionHandler {
 
 	private void rollbackConnection() {
 		try  {
-			connection.rollback();	
+			connection.rollback();
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
