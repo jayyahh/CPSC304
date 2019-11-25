@@ -16,7 +16,7 @@ public class DatabaseConnectionHandler {
 
 
 	private Connection connection = null;
-	
+
 	public DatabaseConnectionHandler() {
 		try {
 			// Load the Oracle JDBC driver
@@ -26,7 +26,7 @@ public class DatabaseConnectionHandler {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 	}
-	
+
 	public void close() {
 		try {
 			if (connection != null) {
@@ -329,30 +329,30 @@ public class DatabaseConnectionHandler {
 	}
 
 	public ReservationModel makeReservation (String vtname, String dLicense, Timestamp fromDateTime,Timestamp toDateTime, String location) throws SQLException {
-try{
-		int defaultConfNo= 1000000;
-		Statement stmt = connection.createStatement();
-		ResultSet rs2 = stmt.executeQuery("select count(distinct confNo)  AS nums from reservation");
+		try{
+			int defaultConfNo= 1000000;
+			Statement stmt = connection.createStatement();
+			ResultSet rs2 = stmt.executeQuery("select count(distinct confNo)  AS nums from reservation");
 
-		while(rs2.next()){
-			defaultConfNo = 1000000 + rs2.getInt("nums");
+			while(rs2.next()){
+				defaultConfNo = 1000000 + rs2.getInt("nums");
+			}
+
+
+			ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDateTime, toDateTime, location);
+
+			insert("Reservation", model);
+
+			return model;
+		}catch(SQLException e){
+			throw new SQLException(e.getMessage());
 		}
-
-
-		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDateTime, toDateTime, location);
-
-		insert("Reservation", model);
-
-		return model;
-	}catch(SQLException e){
-	throw new SQLException(e.getMessage());
-	}
 	}
 
 	public RentModel rentAVehicleWithoutReservation(String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location) throws SQLException {
 		try{ReservationModel model = makeReservation(vtname, dLicense, fromDateTime, toDateTime,location);
-		RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), cardName, cardNo, expDate);
-		return rentModel;}
+			RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), cardName, cardNo, expDate);
+			return rentModel;}
 		catch (SQLException e){
 			throw new SQLException(e.getMessage());
 		}
@@ -381,18 +381,18 @@ try{
 			car.setString(3, "Available");
 			ResultSet carRs = car.executeQuery();
 			if(!carRs.next()){
-			    System.out.println("No more available cars for selected. Please retry");
-                return new RentModel(0,0,null,null,null,null,0,null,0,null,0);
-            }
+				System.out.println("No more available cars for selected. Please retry");
+				return new RentModel(0,0,null,null,null,null,0,null,0,null,0);
+			}
 			int vid = carRs.getInt("vid");
 			int odometer = carRs.getInt("odometer");
 
-            int defaultRid = 1;
+			int defaultRid = 1;
 			Statement stmt = connection.createStatement();
 			ResultSet rs2 = stmt.executeQuery("select count(distinct rid)  AS rids from rent");
 
 			while(rs2.next()){
-			defaultRid = 1 + rs2.getInt("rids");
+				defaultRid = 1 + rs2.getInt("rids");
 			}
 
 			RentModel model = new RentModel(defaultRid, vid, dlicense, fromDateTime, toDateTime, location, odometer, cardName, cardNo, expDate, confNo);
@@ -527,7 +527,7 @@ try{
 			vt.setString(1, vtname);
 			ResultSet rs = vt.executeQuery();
 
-            rs.next();
+			rs.next();
 			double dayRate = rs.getDouble("drate");
 			double weekRate = rs.getDouble("wrate");
 			double hourRate = rs.getDouble("hrate");
@@ -588,16 +588,17 @@ try{
 
 	public void delete(String tableName, String id, String idColName) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("DELETE FROM ? WHERE ? = ?");
-			ps.setString(1, tableName);
-			ps.setString(2, idColName);
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM Customer WHERE name = ?");
+			//ps.setString(1, tableName);
+
+			//ps.setString(2, idColName);
 
 			if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
 				ps.setString(3, id);
 			}
 			else {
 				int idAsInt = Integer.parseInt(id);
-				ps.setInt(3, idAsInt);
+				ps.setInt(1, idAsInt);
 			}
 
 			int rowCount = ps.executeUpdate();
@@ -735,12 +736,10 @@ try{
 
 	public void update(String tableName, String pkColName, String pk, String colName, String var, boolean updateIntValue) {
 		try {
-			String updateString = "UPDATE " + tableName + " SET " + colName  + "= ? WHERE " + pkColName + " = ? ";
-			PreparedStatement ps = this.connection.prepareStatement(updateString);
-			ps.setString(1, var);
-			ps.setString(2, pk);
-
-			/*if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
+			PreparedStatement ps = this.connection.prepareStatement("UPDATE ? SET ? = ? WHERE ? = ?");
+			ps.setString(1, tableName);
+			ps.setString(2, colName);
+			if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
 				ps.setString(3, var);
 			}
 			else {
@@ -756,7 +755,7 @@ try{
 			}
 			else {
 				ps.setString(5, pk);
-			}*/
+			}
 
 			int rowCount = ps.executeUpdate();
 
@@ -869,7 +868,7 @@ try{
 		ArrayList<String> result = new ArrayList<String>();
 		try {
 			Statement stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT table_name FROM all_tables");
+			ResultSet rs = stmt.executeQuery("SELECT table_name FROM user_tables");
 			while (rs.next()) {
 				result.add(rs.getString("table_name"));
 			}
@@ -886,10 +885,10 @@ try{
 			if (connection != null) {
 				connection.close();
 			}
-	
+
 			connection = DriverManager.getConnection(ORACLE_URL, username, password);
 			connection.setAutoCommit(false);
-	
+
 			System.out.println("\nConnected to Oracle!");
 			return true;
 		} catch (SQLException e) {
@@ -900,7 +899,7 @@ try{
 
 	private void rollbackConnection() {
 		try  {
-			connection.rollback();	
+			connection.rollback();
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
