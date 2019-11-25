@@ -430,18 +430,18 @@ public class DatabaseConnectionHandler {
 			ps.setString(5, vtName);
 
 			ResultSet rs = ps.executeQuery();
-
-    		ResultSetMetaData rsmd = rs.getMetaData();
-
-    		System.out.println(" ");
-
-    		// display column names;
-    		for (int i = 0; i < rsmd.getColumnCount(); i++) {
-    			// get column name and print it
-    			System.out.printf("%-15s", rsmd.getColumnName(i + 1));
-    		}
-			System.out.println(" ");
-
+//
+//    		ResultSetMetaData rsmd = rs.getMetaData();
+//
+//    		System.out.println(" ");
+//
+//    		// display column names;
+//    		for (int i = 0; i < rsmd.getColumnCount(); i++) {
+//    			// get column name and print it
+//    			System.out.printf("%-15s", rsmd.getColumnName(i + 1));
+//    		}
+//
+//    		System.out.println(" ");
 			while(rs.next()) {
 				VehicleModel model = new VehicleModel(rs.getInt("vid"),
 						rs.getString("vLicense"),
