@@ -476,7 +476,7 @@ try{
 
 	public ResultSet checkValidRentalId(int rid) throws SQLException {
 		try{
-			PreparedStatement rental = connection.prepareStatement("select * from rent where rid = ?");
+			PreparedStatement rental = connection.prepareStatement("select r.odometer AS odometer, r.fromDateTime AS fromDateTime, v.vtname AS vtname, r.vid AS vid   from rent R,vehicle V where rid = ? and R.vid = V.vid");
 			rental.setInt (1, rid);
 			ResultSet rs = rental.executeQuery();
 			return rs;
@@ -494,7 +494,6 @@ try{
 			int beginningOdometer = rs.getInt("odometer");
 			String vtName = rs.getString("vtname");
 			int vid = rs.getInt("vid");
-
 			PreparedStatement vt = connection.prepareStatement("update VehicleType set numAvail = numAvail + 1 where vtname = ?");
 			vt.setString (1, vtName);
 			vt.executeUpdate();
