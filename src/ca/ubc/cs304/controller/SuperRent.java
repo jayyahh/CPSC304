@@ -8,6 +8,7 @@ import ca.ubc.cs304.ui.LoginWindow;
 import ca.ubc.cs304.ui.SuperRentTerminalTransactions;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * This is the main controller class that will orchestrate everything.
@@ -274,6 +275,32 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         dbHandler = null;
 
         System.exit(0);
+    }
+
+    public void viewAllTables() {
+        ArrayList<String> tables = dbHandler.viewAllTables();
+        System.out.println("List of the tables: ");
+        for (int i = 0; i<tables.size();i++){
+            System.out.println(tables.get(i));
+        }
+    }
+
+    public void viewTable(String tableName) {
+        Object[] objects = dbHandler.viewTable(tableName);
+        System.out.println("Information of table " + tableName);
+        for (int i = 0; i<objects.length; i++){
+            System.out.println(objects[i]);
+        }
+    }
+
+    public void updateTable(String tableName, String primaryKeyColName, String primaryKey, String colName, String condition, boolean updateIntValue) {
+        dbHandler.update(tableName, primaryKeyColName, primaryKey, colName, condition, updateIntValue);
+        System.out.println("Done");
+    }
+
+    public void deleteFromTable(String tableName, String ColName, String condition) {
+        dbHandler.delete(tableName, condition, ColName);
+        System.out.println("Done");
     }
 
     /**

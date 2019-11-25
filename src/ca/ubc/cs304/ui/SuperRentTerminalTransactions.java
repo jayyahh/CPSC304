@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import ca.ubc.cs304.delegates.MainTerminalTransactionsDelegate;
 
@@ -40,7 +41,12 @@ public class SuperRentTerminalTransactions {
             System.out.println("3. Rent a vehicle");
             System.out.println("4. Return a vehicle");
             System.out.println("5. Generate a daily report");
-            System.out.println("6. Quit");
+            System.out.println("6. Insert into a table");
+            System.out.println("7. Delete from a table");
+            System.out.println("8. Update a table");
+            System.out.println("9. View a table");
+            System.out.println("10. View all tables");
+            System.out.println("11. Quit");
             System.out.print("Please choose one of the above 6 options: ");
 
             choice = readInteger(false);
@@ -64,6 +70,21 @@ public class SuperRentTerminalTransactions {
                         generateDailyReport();
                         break;
                     case 6:
+                        insertIntoTable();
+                        break;
+                    case 7:
+                        deleteFromTable();
+                        break;
+                    case 8:
+                        updateTable();
+                        break;
+                    case 9:
+                        viewTable();
+                        break;
+                    case 10:
+                        viewAllTables();
+                        break;
+                    case 11:
                         handleQuitOption();
                         break;
                     default:
@@ -72,6 +93,103 @@ public class SuperRentTerminalTransactions {
                 }
             }
         }
+    }
+
+    private void insertIntoTable()
+
+    private void deleteFromTable() {
+        String tableName = selectTable();
+        String colName = enterAny("Column Name");
+        String condition = enterAny("Condition");
+        delegate.deleteFromTable(tableName, colName, condition);
+    }
+
+
+    private void viewAllTables(){
+        delegate.viewAllTables();
+    }
+
+    private void viewTable() {
+        String tableName = selectTable();
+        delegate.viewTable(tableName);
+    }
+
+    private void updateTable(){
+        String tableName = selectTable();
+        String primaryKeyColName = enterAny("Primary Key Column Name");
+        String primaryKey = enterAny("Primary Key");
+        String colName = enterAny("Column Name");
+        String condition = enterAny("Condition");
+        boolean updateIntValue = updateIntValueTrueOrFalse();
+        delegate.updateTable(tableName, primaryKeyColName, primaryKey, colName, condition, updateIntValue);
+    }
+
+    private boolean updateIntValueTrueOrFalse(){
+        System.out.println("Are you updating an integer value?");
+        boolean ret = false;
+        int choice = INVALID_INPUT;
+        System.out.println("1. True");
+        System.out.println("2. False");
+        while (choice < 1 || choice > 2) {
+            choice = readInteger(false);
+            if (choice != INVALID_INPUT) {
+                switch (choice) {
+                    case 1:
+                        ret = true;
+                        break;
+                    case 2:
+                        ret = false;
+                        break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    private String selectTable(){
+        String table = "";
+        int choice = INVALID_INPUT;
+        System.out.println();
+        System.out.println("Please select one of the following tables to view: ");
+        System.out.println("1. Customer");
+        System.out.println("2. Rent");
+        System.out.println("3. Reservation");
+        System.out.println("4. Return");
+        System.out.println("5. Vehicle");
+        System.out.println("6. Vehicle Type");
+        System.out.println("7. Quit");
+        while (choice < 1 || choice > 7) {
+            choice = readInteger(true);
+            if (choice != INVALID_INPUT) {
+                switch (choice) {
+                    case 1:
+                        table = "Customer";
+                        break;
+                    case 2:
+                        table = "Rent";
+                        break;
+                    case 3:
+                        table = "Reservation";
+                        break;
+                    case 4:
+                        table = "Return";
+                        break;
+                    case 5:
+                        table = "Vehicle";
+                        break;
+                    case 6:
+                        table = "VehicleType";
+                        break;
+                    case 7:
+                        handleQuitOption();
+                        break;
+                    default:
+                        System.out.println(WARNING_TAG + " The number that you entered was not a valid option.");
+                        break;
+                }
+            }
+        }
+        return table;
     }
 
     private void showAvailableVehicles() {
@@ -173,7 +291,7 @@ public class SuperRentTerminalTransactions {
                         break;
                     case 4:
                         Date date4 = selectDate("report");
-                        Timestamp d4 = convertToSqlTimeStamp(date4,00,01);
+                        Timestamp d4 = convertToSqlTimeStamp(date4,00,00);
                         String branch2 = selectLocation();
                         delegate.generateReturnsBranchReport(d4, branch2);
                         break;
