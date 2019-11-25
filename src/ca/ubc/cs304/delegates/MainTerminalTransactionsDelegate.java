@@ -13,8 +13,9 @@ import java.sql.Timestamp;
  */
 public interface MainTerminalTransactionsDelegate {
 
-    public void showAvailableVehicles(String location, Timestamp fromDateTime, Timestamp toDateTimee, String carType);
-    public void rentVehicle(int confNo, String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location);
+    public void showAvailableVehicles(String location, Timestamp fromDateTime, Timestamp toDateTime, String carType);
+    public void rentAVehicleWithoutReservation(String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location);
+    public void rentVehicleWithReservation(int confNo, String cardName, int cardNo, Timestamp expDate);
     public void reserveVehicle(String carType, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String location);
     public void returnVehicle(int rid, Timestamp returnTime, int odometerReading, boolean isTankFull);
     public void generateRentalsReport(Timestamp date);
