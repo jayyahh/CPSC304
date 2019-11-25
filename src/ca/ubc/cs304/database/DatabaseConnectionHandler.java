@@ -13,8 +13,7 @@ public class DatabaseConnectionHandler {
 	private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
 	private static final String EXCEPTION_TAG = "[EXCEPTION]";
 	private static final String WARNING_TAG = "[WARNING]";
-	private int uniqueRId = 0;
-	private int uniqueConfNo = 1000000;
+
 
 	private Connection connection = null;
 	
@@ -305,13 +304,6 @@ public class DatabaseConnectionHandler {
 		return totalNew;
 	}
 
-	public int getRId(){
-		return uniqueRId++;
-	}
-
-	public int getConfNo(){
-		return uniqueConfNo++;
-	}
 
 	public void createCustomer(String dLicense, String name, String address, String phone){
 		CustomerModel model = new CustomerModel(phone,name,address, dLicense);
@@ -359,14 +351,14 @@ try{
 
 	public RentModel rentAVehicleWithoutReservation(String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location) throws SQLException {
 		try{ReservationModel model = makeReservation(vtname, dLicense, fromDateTime, toDateTime,location);
-		RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), dLicense, cardName, cardNo, expDate);
+		RentModel rentModel = rentAVehicleWithReservation(model.getConfNo(), cardName, cardNo, expDate);
 		return rentModel;}
 		catch (SQLException e){
 			throw new SQLException(e.getMessage());
 		}
 	}
 
-	public RentModel rentAVehicleWithReservation(int confNo, String dLicense,  String cardName, int cardNo, Timestamp expDate) throws SQLException {
+	public RentModel rentAVehicleWithReservation(int confNo,  String cardName, int cardNo, Timestamp expDate) throws SQLException {
 		try{
 			PreparedStatement reso = connection.prepareStatement("select * from reservation where confNo = ?");
 			reso.setInt (1, confNo);
@@ -374,19 +366,24 @@ try{
 
 			if (!rs.next()){
 				System.out.println("Error - Invalid confirmation number, please retry");
-				// do sth when confirmation number is wrong.
+				return new RentModel(0,0,null,null,null,null,0,null,0,null,0);
 			}
 
 			String vtName = rs.getString("vtname");
 			Timestamp fromDateTime = rs.getTimestamp("fromDateTime");
 			Timestamp toDateTime = rs.getTimestamp("toDateTime");
 			String location = rs.getString("location");
+			String dlicense = rs.getString("dlicense");
 
 			PreparedStatement car = connection.prepareStatement("select * from vehicle where location = ? and vtname = ? and status = ?");
 			car.setString(1, location);
 			car.setString(2, vtName);
 			car.setString(3, "Available");
 			ResultSet carRs = car.executeQuery();
+			if(!carRs.next()){
+			    System.out.println("No more available cars for selected. Please retry");
+                return new RentModel(0,0,null,null,null,null,0,null,0,null,0);
+            }
 			int vid = carRs.getInt("vid");
 			int odometer = carRs.getInt("odometer");
 
@@ -398,7 +395,7 @@ try{
 			defaultRid = 1 + rs2.getInt("rids");
 			}
 
-			RentModel model = new RentModel(defaultRid, vid, dLicense, fromDateTime, toDateTime, location, odometer, cardName, cardNo, expDate, confNo);
+			RentModel model = new RentModel(defaultRid, vid, dlicense, fromDateTime, toDateTime, location, odometer, cardName, cardNo, expDate, confNo);
 			insert("Rent", model);
 
 			PreparedStatement vtType = connection.prepareStatement("update VehicleType set numAvail = numAvail - 1 where vtname = ?");
@@ -476,7 +473,7 @@ try{
 
 	public ResultSet checkValidRentalId(int rid) throws SQLException {
 		try{
-			PreparedStatement rental = connection.prepareStatement("select * from rent where rid = ?");
+			PreparedStatement rental = connection.prepareStatement("select r.odometer AS odometer, r.fromDateTime AS fromDateTime, v.vtname AS vtname, r.vid AS vid   from rent R,vehicle V where rid = ? and R.vid = V.vid");
 			rental.setInt (1, rid);
 			ResultSet rs = rental.executeQuery();
 			return rs;
@@ -494,19 +491,15 @@ try{
 			int beginningOdometer = rs.getInt("odometer");
 			String vtName = rs.getString("vtname");
 			int vid = rs.getInt("vid");
-
 			PreparedStatement vt = connection.prepareStatement("update VehicleType set numAvail = numAvail + 1 where vtname = ?");
 			vt.setString (1, vtName);
 			vt.executeUpdate();
-
 			PreparedStatement updateCar = connection.prepareStatement("update Vehicle set status = 'Available' where vid = ?");
 			updateCar.setInt(1,vid);
 			updateCar.executeUpdate();
-
 			RentalValue value = calculateValue(fromDateTime, returnDateTime, vtName, beginningOdometer, odometerReading, isTankFull);
 			ReturnModel model = new ReturnModel(rid,returnDateTime,odometerReading,isTankFull, value.totalValue );
 			insert("Return",model);
-
 			rs.close();
 			vt.close();
 			updateCar.close();
@@ -533,6 +526,8 @@ try{
 			PreparedStatement vt = connection.prepareStatement("select * from VehicleType where vtname = ?");
 			vt.setString(1, vtname);
 			ResultSet rs = vt.executeQuery();
+
+            rs.next();
 			double dayRate = rs.getDouble("drate");
 			double weekRate = rs.getDouble("wrate");
 			double hourRate = rs.getDouble("hrate");
@@ -671,13 +666,14 @@ try{
 					break;
 				case "Reservation":
 					ReservationModel reservation = (ReservationModel) Class.forName("ca.ubc.cs304.model.ReservationModel").cast(o);
-					ps = connection.prepareStatement("INSERT INTO reservation VALUES (?,?,?,?,?,?)");
+					ps = connection.prepareStatement("INSERT INTO reservation VALUES (?,?,?,?,?,?,?)");
 					ps.setInt(1, reservation.getConfNo());
 					ps.setString(2, reservation.getVtname());
 					ps.setString(3, reservation.getdLicense());
 					ps.setTimestamp(4, reservation.getFromDate());
 					ps.setTimestamp(5, reservation.getToDate());
 					ps.setString(6, reservation.getLocation());
+					ps.setString(7, reservation.getCityFromLocation(reservation.getLocation()));
 					ps.executeUpdate();
 					connection.commit();
 
@@ -818,7 +814,8 @@ try{
 								rs.getDouble("wirate"),
 								rs.getDouble("dirate"),
 								rs.getDouble("hirate"),
-								rs.getDouble("krate"));
+								rs.getDouble("krate"),
+								rs.getDouble("numAvail"));
 						result.add(vt);
 						break;
 					case "Reservation":

@@ -85,15 +85,33 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         }
     }
 
-    public void rentVehicle(int confNo, String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location)
+    public void rentAVehicleWithoutReservation(String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location)
     {
         RentModel model;
         try{
-            if (confNo == 0) {
-                model = dbHandler.rentAVehicleWithoutReservation(vtname, dLicense, fromDateTime,toDateTime, name, cardName, cardNo, expDate, location);
-            }
-            else {
-                model = dbHandler.rentAVehicleWithReservation(confNo, dLicense, cardName, cardNo, expDate);
+
+            model = dbHandler.rentAVehicleWithoutReservation(vtname, dLicense, fromDateTime,toDateTime, name, cardName, cardNo, expDate, location);
+            //print out receipt
+if (model.getRid() == 0) {
+transaction.showMainMenu(this);
+}
+            System.out.print("Rental completed!");
+            System.out.println("ConfirmationNo: " +  model.getConfNo());
+            System.out.println("Rental Period: " +  model.getFromDate() + "to" + model.getToDate());
+            System.out.println("Location: " + model.getLocation());
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            transaction.showMainMenu(this);
+        }
+    }
+    public void rentVehicleWithReservation(int confNo, String cardName, int cardNo, Timestamp expDate)
+    {
+        RentModel model;
+        try{
+            model = dbHandler.rentAVehicleWithReservation(confNo, cardName, cardNo, expDate);
+            if (model.getRid() == 0) {
+                transaction.showMainMenu(this);
             }
             //print out receipt
             System.out.print("Rental completed!");
@@ -239,10 +257,9 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         try{
 
             ResultSet rs = dbHandler.checkValidRentalId(rid);
-            //while loop?
             if (!rs.next()){
                 System.out.println("Error - Invalid confirmation number, please retry");
-                //retry, break out of thing
+                transaction.showMainMenu(this);
             }
 
             model = dbHandler.returnVehicle(rid, returnDateTime, odometerReading,isTankFull,rs);
@@ -253,10 +270,10 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
             System.out.println("Rental Days: " +  model.valueDetails.numDays);
             System.out.println("Total Cost: $" + model.getValue());
             System.out.println("Cost breakdown: ");
-            System.out.println("Rental Rate - " + model.valueDetails.rateValue);
-            System.out.println("Insurance Rate - " + model.valueDetails.insuranceValue);
-            System.out.println("Mileage Rate - " + model.valueDetails.kmValue);
-            System.out.println("Gas Rate -" + model.valueDetails.tankRate);
+            System.out.println("Rental Rate - $" + model.valueDetails.rateValue);
+            System.out.println("Insurance Rate - $" + model.valueDetails.insuranceValue);
+            System.out.println("Mileage Rate - $" + model.valueDetails.kmValue);
+            System.out.println("Gas Rate - $" + model.valueDetails.tankRate);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             transaction.showMainMenu(this);
