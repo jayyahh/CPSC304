@@ -92,6 +92,9 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
 
             model = dbHandler.rentAVehicleWithoutReservation(vtname, dLicense, fromDateTime,toDateTime, name, cardName, cardNo, expDate, location);
             //print out receipt
+if (model.getRid() == 0) {
+transaction.showMainMenu(this);
+}
             System.out.print("Rental completed!");
             System.out.println("ConfirmationNo: " +  model.getConfNo());
             System.out.println("Rental Period: " +  model.getFromDate() + "to" + model.getToDate());
@@ -107,6 +110,9 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         RentModel model;
         try{
             model = dbHandler.rentAVehicleWithReservation(confNo, cardName, cardNo, expDate);
+            if (model.getRid() == 0) {
+                transaction.showMainMenu(this);
+            }
             //print out receipt
             System.out.print("Rental completed!");
             System.out.println("ConfirmationNo: " +  model.getConfNo());

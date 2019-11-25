@@ -366,7 +366,7 @@ try{
 
 			if (!rs.next()){
 				System.out.println("Error - Invalid confirmation number, please retry");
-				// do sth when confirmation number is wrong.
+				return new RentModel(0,0,null,null,null,null,0,null,0,null,0);
 			}
 
 			String vtName = rs.getString("vtname");
@@ -380,6 +380,10 @@ try{
 			car.setString(2, vtName);
 			car.setString(3, "Available");
 			ResultSet carRs = car.executeQuery();
+			if(!carRs.next()){
+			    System.out.println("No more available cars for selected. Please retry");
+                return new RentModel(0,0,null,null,null,null,0,null,0,null,0);
+            }
 			int vid = carRs.getInt("vid");
 			int odometer = carRs.getInt("odometer");
 
