@@ -36,7 +36,6 @@ public class ReservationModel {
         return this.fromDate;
     }
 
-
     public Timestamp getToDate() {
         return this.toDate;
     }
