@@ -288,9 +288,93 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
     public void viewTable(String tableName) {
         Object[] objects = dbHandler.viewTable(tableName);
         System.out.println("Information of table " + tableName);
-        for (int i = 0; i<objects.length; i++){
-            System.out.println(objects[i]);
+        for (int i =0; i<objects.length;i++) {
+            if (objects[i] instanceof CustomerModel){
+                displayCustomer((CustomerModel) objects[i]);
+            } else if (objects[i] instanceof RentModel) {
+                displayRent((RentModel) objects[i]);
+            } else if (objects[i] instanceof ReservationModel) {
+                displayReservation((ReservationModel) objects[i]);
+            } else if (objects[i] instanceof  ReturnModel) {
+                displayReturn((ReturnModel) objects[i]);
+            } else if (objects[i] instanceof VehicleModel) {
+                displayVehicle((VehicleModel) objects[i]);
+            } else if (objects[i] instanceof VehicleTypeModel) {
+                displayVehicleType((VehicleTypeModel) objects[i]);
+            }
         }
+    }
+
+    private void displayCustomer(CustomerModel vtm) {
+        System.out.printf("%-20.20s", vtm.getCellPhone());
+        System.out.printf("%-20.20s", vtm.getName());
+        System.out.printf("%-20.20s", vtm.getAddress());
+        System.out.printf("%-20.20s", vtm.getdLicense());
+        System.out.println();
+    }
+
+    private void displayRent(RentModel vtm) {
+        System.out.printf("%-20.20s", vtm.getRid());
+        System.out.printf("%-20.20s", vtm.getVid());
+        System.out.printf("%-20.20s", vtm.getdLicense());
+        System.out.printf("%-40.40s", vtm.getFromDate());
+        System.out.printf("%-40.40s", vtm.getToDate());
+        System.out.printf("%-20.20s", vtm.getLocation());
+        System.out.printf("%-20.20s", vtm.getOdometer());
+        System.out.printf("%-20.20s", vtm.getCardName());
+        System.out.printf("%-20.20s", vtm.getCardNo());
+        System.out.printf("%-40.40s", vtm.getExpDate());
+        System.out.printf("%-20.20s", vtm.getConfNo());
+        System.out.println();
+    }
+
+    private void displayReservation(ReservationModel vtm) {
+        System.out.printf("%-20.20s", vtm.getConfNo());
+        System.out.printf("%-20.20s", vtm.getVtname());
+        System.out.printf("%-20.20s", vtm.getdLicense());
+        System.out.printf("%-40.40s", vtm.getFromDate());
+        System.out.printf("%-40.40s", vtm.getToDate());
+        System.out.printf("%-20.20s", vtm.getLocation());
+        System.out.println();
+    }
+
+    private void displayReturn(ReturnModel vtm) {
+        System.out.printf("%-20.20s", vtm.getRid());
+        System.out.printf("%-40.40s", vtm.getReturnDate());
+        System.out.printf("%-20.20s", vtm.getOdometer());
+        System.out.printf("%-20.20s", vtm.isFullTank());
+        System.out.printf("%-20.20s", vtm.getValue());
+        System.out.println();
+    }
+
+    private void displayVehicle(VehicleModel vtm) {
+        System.out.printf("%-20.20s", vtm.getVid());
+        System.out.printf("%-20.20s", vtm.getVLicense());
+        System.out.printf("%-20.20s", vtm.getMake());
+        System.out.printf("%-20.20s", vtm.getModel());
+        System.out.printf("%-20.20s", vtm.getYear());
+        System.out.printf("%-20.20s", vtm.getColor());
+        System.out.printf("%-20.20s", vtm.getOdometer());
+        System.out.printf("%-20.20s", vtm.getStatus());
+        System.out.printf("%-20.20s", vtm.getVtname());
+        System.out.printf("%-20.20s", vtm.getLocation());
+        System.out.printf("%-20.20s", vtm.getCity());
+        System.out.printf("%-20.20s", vtm.getFuelType());
+        System.out.println();
+    }
+
+    private void displayVehicleType(VehicleTypeModel vtm) {
+        System.out.printf("%-20.20s", vtm.getVtname());
+        System.out.printf("%-20.20s", vtm.getFeatures());
+        System.out.printf("%-20.20s", vtm.getWRate());
+        System.out.printf("%-20.20s", vtm.getDRate());
+        System.out.printf("%-20.20s", vtm.getHRate());
+        System.out.printf("%-20.20s", vtm.getWiRate());
+        System.out.printf("%-20.20s", vtm.getDiRate());
+        System.out.printf("%-20.20s", vtm.getHiRate());
+        System.out.printf("%-20.20s", vtm.getKRate());
+
+        System.out.println();
     }
 
     public void updateTable(String tableName, String primaryKeyColName, String primaryKey, String colName, String condition, boolean updateIntValue) {
@@ -300,6 +384,11 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
 
     public void deleteFromTable(String tableName, String ColName, String condition) {
         dbHandler.delete(tableName, condition, ColName);
+        System.out.println("Done");
+    }
+
+    public void insertIntoTable(String tableName, Object model) {
+        dbHandler.insert(tableName, model);
         System.out.println("Done");
     }
 

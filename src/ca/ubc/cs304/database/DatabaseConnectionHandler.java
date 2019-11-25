@@ -593,16 +593,17 @@ try{
 
 	public void delete(String tableName, String id, String idColName) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("DELETE FROM ? WHERE ? = ?");
-			ps.setString(1, tableName);
-			ps.setString(2, idColName);
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM Customer WHERE name = ?");
+			//ps.setString(1, tableName);
+
+			//ps.setString(2, idColName);
 
 			if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
 				ps.setString(3, id);
 			}
 			else {
 				int idAsInt = Integer.parseInt(id);
-				ps.setInt(3, idAsInt);
+				ps.setInt(1, idAsInt);
 			}
 
 			int rowCount = ps.executeUpdate();
@@ -870,7 +871,7 @@ try{
 		ArrayList<String> result = new ArrayList<String>();
 		try {
 			Statement stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT table_name FROM all_tables");
+			ResultSet rs = stmt.executeQuery("SELECT table_name FROM user_tables");
 			while (rs.next()) {
 				result.add(rs.getString("table_name"));
 			}

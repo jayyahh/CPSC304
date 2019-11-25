@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import ca.ubc.cs304.delegates.MainTerminalTransactionsDelegate;
+import ca.ubc.cs304.model.*;
 
 
 /**
@@ -47,7 +49,7 @@ public class SuperRentTerminalTransactions {
             System.out.println("9. View a table");
             System.out.println("10. View all tables");
             System.out.println("11. Quit");
-            System.out.print("Please choose one of the above 6 options: ");
+            System.out.print("Please choose one of the above 11 options: ");
 
             choice = readInteger(false);
 
@@ -95,7 +97,125 @@ public class SuperRentTerminalTransactions {
         }
     }
 
-    private void insertIntoTable()
+    private void insertIntoTable() {
+        String tableName = selectTable();
+        switch (tableName) {
+            case "Customer":
+                insertCustomer();
+                break;
+            case "Rent":
+                insertRent();
+                break;
+            case "Reservation":
+                insertReservation();
+                break;
+            case "Return":
+                insertReturn();
+                break;
+            case "Vehicle":
+                insertVehicle();
+                break;
+            case "VehicleType":
+                insertVehicleType();
+                break;
+        }
+    }
+
+    private void insertVehicleType(){
+        String vtName = selectCarType();
+        String features = enterAny("features");
+        double wr = Double.parseDouble(enterAny("weekly rate"));
+        double dr = Double.parseDouble(enterAny("daily rate"));
+        double hr = Double.parseDouble(enterAny("hourly rate"));
+        double wi = Double.parseDouble(enterAny("weekly insurance"));
+        double di = Double.parseDouble(enterAny("daily insurance"));
+        double hi = Double.parseDouble(enterAny("hourly insurance"));
+        double kr = Double.parseDouble(enterAny("per kilometer rate"));
+        VehicleTypeModel vtm = new VehicleTypeModel(vtName, features, wr, dr, hr, wi,di,hi,kr);
+        delegate.insertIntoTable("VehicleType", vtm);
+    }
+
+    private void insertVehicle(){
+        int vid = Integer.parseInt(enterAny("vid"));
+        String vLicense = enterAny("Vehicle License");
+        String make = enterAny("make");
+        String model = enterAny("model");
+        String year = enterAny("year");
+        String color = enterAny("color");
+        int odo = Integer.parseInt(enterAny("odometer"));
+        String status = enterAny("status");
+        String vt = selectCarType();
+        String locn = selectLocation();
+        String city = enterAny("city");
+        String fuelType = enterAny("fuel type");
+        VehicleModel vm = new VehicleModel(vid, vLicense, make, model, year, color, odo, status, vt, locn, city, fuelType);
+        delegate.insertIntoTable("Vehicle", vm);
+    }
+
+    private void insertReturn() {
+        int rid = Integer.parseInt(enterAny("rid"));
+        Date returnDate = selectDate("returnDate");
+        int returnHour = selectHour();
+        int returnMin = selectMin();
+        Timestamp returnTime = convertToSqlTimeStamp(returnDate, returnHour, returnMin);
+        int odo = Integer.parseInt(enterAny("odometer"));
+        System.out.println("Is tank full?");
+        boolean fullTank = selectBool();
+        double value = Double.parseDouble(enterAny("value"));
+        ReturnModel rm = new ReturnModel(rid, returnTime,odo,fullTank,value);
+        delegate.insertIntoTable("Return", rm);
+    }
+
+    private void insertReservation() {
+        int confNo = Integer.parseInt(enterAny("confirmation number"));
+        String vtname = selectCarType();
+        String dLicense = enterAny("driver's license");
+        Date fromDate = selectDate("fromTime");
+        int fromHour = selectHour();
+        int fromMin = selectMin();
+        Timestamp fromTime = convertToSqlTimeStamp(fromDate, fromHour, fromMin);
+        Date toDate = selectDate("toTime");
+        int toHour = selectHour();
+        int toMin = selectMin();
+        Timestamp toTime = convertToSqlTimeStamp(toDate, toHour, toMin);
+        String location = selectLocation();
+        ReservationModel rm = new ReservationModel(confNo, vtname, dLicense, fromTime, toTime, location);
+        delegate.insertIntoTable("Reservation", rm);
+    }
+
+    private void insertCustomer(){
+        String cell = enterAny("phone number");
+        String name = enterAny("name");
+        String address = enterAny("address");
+        String dLicense = enterAny("driver's license");
+        CustomerModel cm = new CustomerModel(cell, name, address, dLicense);
+        delegate.insertIntoTable("Customer", cm);
+    }
+
+    private void insertRent() {
+        int rid = Integer.parseInt(enterAny("rid"));
+        int vid = Integer.parseInt(enterAny("vid"));
+        String dlicense = enterAny("driver's license");
+        Date fromDate = selectDate("fromTime");
+        int fromHour = selectHour();
+        int fromMin = selectMin();
+        Timestamp fromTime = convertToSqlTimeStamp(fromDate, fromHour, fromMin);
+        Date toDate = selectDate("toTime");
+        int toHour = selectHour();
+        int toMin = selectMin();
+        Timestamp toTime = convertToSqlTimeStamp(toDate, toHour, toMin);
+        String location = selectLocation();
+        int odometer = Integer.parseInt(enterAny("odometer"));
+        String cardName = enterAny("card name");
+        int cardNo = Integer.parseInt(enterAny("card number"));
+        Date expTime = selectDate("expiration date");
+        int expHour = selectHour();
+        int expMin = selectMin();
+        Timestamp expDate = convertToSqlTimeStamp(expTime, expHour, expMin);
+        int confNo = Integer.parseInt(enterAny("confirmation number"));
+        RentModel rm = new RentModel(rid, vid, dlicense, fromTime, toTime, location, odometer, cardName, cardNo, expDate, confNo);
+        delegate.insertIntoTable("Rent", rm);
+    }
 
     private void deleteFromTable() {
         String tableName = selectTable();
@@ -116,10 +236,10 @@ public class SuperRentTerminalTransactions {
 
     private void updateTable(){
         String tableName = selectTable();
-        String primaryKeyColName = enterAny("Primary Key Column Name");
-        String primaryKey = enterAny("Primary Key");
-        String colName = enterAny("Column Name");
-        String condition = enterAny("Condition");
+        String primaryKeyColName = enterAny("Set Column Name");
+        String primaryKey = enterAny("Set To Value");
+        String colName = enterAny("Condition Column Name");
+        String condition = enterAny("Condition Value");
         boolean updateIntValue = updateIntValueTrueOrFalse();
         delegate.updateTable(tableName, primaryKeyColName, primaryKey, colName, condition, updateIntValue);
     }

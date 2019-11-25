@@ -39,4 +39,6 @@ public interface MainTerminalTransactionsDelegate {
     public void updateTable(String tableName, String primaryKeyColName, String primaryKey, String colName, String condition, boolean updateIntValue);
 
     public void deleteFromTable(String tableName, String ColName, String condition);
+
+    public void insertIntoTable(String tableName, Object model);
 }
