@@ -817,7 +817,8 @@ try{
 								rs.getDouble("wirate"),
 								rs.getDouble("dirate"),
 								rs.getDouble("hirate"),
-								rs.getDouble("krate"));
+								rs.getDouble("krate"),
+								rs.getDouble("numAvail"))
 						result.add(vt);
 						break;
 					case "Reservation":

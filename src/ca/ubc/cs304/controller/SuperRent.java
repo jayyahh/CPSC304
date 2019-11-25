@@ -7,9 +7,6 @@ import ca.ubc.cs304.model.*;
 import ca.ubc.cs304.ui.LoginWindow;
 import ca.ubc.cs304.ui.SuperRentTerminalTransactions;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.*;
 
 /**
@@ -161,7 +158,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
             System.out.println();
         }
         System.out.println();
-        System.out.println("Total New Rentals on " + date + " : " + newRentals);
+        System.out.println("Total New Rentals on this day: " + newRentals);
     }
 
     public void generateRentalsBranchReport(Timestamp date, String branch) {
@@ -179,7 +176,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
             System.out.printf("%-10.10s", dailyRentalReportModels[i].typeCount);
             System.out.println();
         }
-        System.out.println("Total New Rentals on " + date + " at branch " + branch + " : " + newRentals);
+        System.out.println("Total New Rentals on this day at branch " + branch + " : " + newRentals);
         System.out.println("Total Rentals of Branch: " + totalOfBranch);
     }
 
@@ -212,8 +209,8 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
             System.out.printf("%-25.25s", dailyReturnReportPerBranchModels[i].value);
             System.out.println();
         }
-        System.out.println("Total Returns on " + date + " : " + totalReturns);
-        System.out.println("Total Earning of Company on " + date + " : " + totalEarning);
+        System.out.println("Total Returns on this day: " + totalReturns);
+        System.out.println("Total Earning of Company on this day: " + totalEarning);
     }
 
     public void generateReturnsBranchReport(Timestamp date, String branch) {
@@ -233,8 +230,8 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
             System.out.printf("%-25.25s", dailyReturnReportModels[i].value);
             System.out.println();
         }
-        System.out.println("Total Returns on " + date + " of branch " + branch + " : " + totalReturnsOfBranch);
-        System.out.println("Total Earning of branch " + branch + " on " + date + " : " + totalEarningOfBranch);
+        System.out.println("Total Returns on this day of branch " + branch + " : " + totalReturnsOfBranch);
+        System.out.println("Total Earning of branch " + branch + " on this day: " + totalEarningOfBranch);
     }
 
     public void returnVehicle(int rid, Timestamp returnDateTime, int odometerReading, boolean isTankFull){
