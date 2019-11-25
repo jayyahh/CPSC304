@@ -625,6 +625,10 @@ public class DatabaseConnectionHandler {
 				double idAsDouble = Double.parseDouble(id);
 				ps.setDouble(1, idAsDouble);
 			}
+			else if (idColName.equals("fromDateTime") || idColName.equals("toDateTime") || idColName.equals("returnDateTime")) {
+				Timestamp ts = Timestamp.valueOf(id);
+				ps.setTimestamp(1, ts);
+			}
 			else {
 				ps.setString(1,id);
 			}
@@ -779,28 +783,44 @@ public class DatabaseConnectionHandler {
 
 	/** This implementation of the update method can only update one parameter at a time */
 
-	public void update(String tableName, String pkColName, String pk, String colName, String var, boolean updateIntValue) {
+	public void update(String tableName, String pkColName, String pk, String colName, String var) {
 		try {
-			PreparedStatement ps = this.connection.prepareStatement("UPDATE ? SET ? = ? WHERE ? = ?");
-			ps.setString(1, tableName);
-			ps.setString(2, colName);
-			if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
-				ps.setString(3, var);
-			}
-			else {
+			String updateString = "UPDATE " + tableName + " SET " + pkColName  + "= ? WHERE " + pkColName + " = ? ";
+			PreparedStatement ps = this.connection.prepareStatement(updateString);
+			if (colName.equals("vid") || colName.equals("odometer") || colName.equals("confNo") || colName.equals("rid")) {
 				int varAsInt = Integer.parseInt(var);
-				ps.setInt(3, varAsInt);
+				ps.setInt(1, varAsInt);
 			}
-
-			ps.setString(4, pkColName);
-
-			if (updateIntValue) {
-				int pkAsInt = Integer.parseInt(pk);
-				ps.setInt(5, pkAsInt);
+			else if (colName.equals("wrate") || colName.equals("drate") || colName.equals("hrate") || colName.equals("wirate") ||
+					colName.equals("dirate") || colName.equals("hirate") || colName.equals("krate")) {
+				double varAsDouble = Double.parseDouble(var);
+				ps.setDouble(1, varAsDouble);
+			}
+			else if (colName.equals("fromDateTime") || colName.equals("toDateTime") || colName.equals("returnDateTime")) {
+				Timestamp varAsTimeStamp = Timestamp.valueOf(var);
+				ps.setTimestamp(1, varAsTimeStamp);
 			}
 			else {
-				ps.setString(5, pk);
+				ps.setString(1, var);
 			}
+
+			if (pkColName.equals("vid") || pkColName.equals("odometer") || pkColName.equals("confNo") || pkColName.equals("rid")) {
+				int pkAsInt = Integer.parseInt(pk);
+				ps.setInt(2, pkAsInt);
+			}
+			else if (pkColName.equals("wrate") || pkColName.equals("drate") || pkColName.equals("hrate") || pkColName.equals("wirate") ||
+					pkColName.equals("dirate") || pkColName.equals("hirate") || pkColName.equals("krate")) {
+				double pkAsDouble = Double.parseDouble(pk);
+				ps.setDouble(2, pkAsDouble);
+			}
+			else if (pkColName.equals("fromDateTime") || pkColName.equals("toDateTime") || pkColName.equals("returnDateTime")) {
+				Timestamp pkAsTimestamp = Timestamp.valueOf(pk);
+				ps.setTimestamp(2, pkAsTimestamp);
+			}
+			else {
+				ps.setString(2, pk);
+			}
+
 
 			int rowCount = ps.executeUpdate();
 
