@@ -85,16 +85,28 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
         }
     }
 
-    public void rentVehicle(int confNo, String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location)
+    public void rentAVehicleWithoutReservation(String vtname, String dLicense, Timestamp fromDateTime, Timestamp toDateTime, String name, String cardName, int cardNo, Timestamp expDate, String location)
     {
         RentModel model;
         try{
-            if (confNo == 0) {
-                model = dbHandler.rentAVehicleWithoutReservation(vtname, dLicense, fromDateTime,toDateTime, name, cardName, cardNo, expDate, location);
-            }
-            else {
-                model = dbHandler.rentAVehicleWithReservation(confNo, dLicense, cardName, cardNo, expDate);
-            }
+
+            model = dbHandler.rentAVehicleWithoutReservation(vtname, dLicense, fromDateTime,toDateTime, name, cardName, cardNo, expDate, location);
+            //print out receipt
+            System.out.print("Rental completed!");
+            System.out.println("ConfirmationNo: " +  model.getConfNo());
+            System.out.println("Rental Period: " +  model.getFromDate() + "to" + model.getToDate());
+            System.out.println("Location: " + model.getLocation());
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            transaction.showMainMenu(this);
+        }
+    }
+    public void rentVehicleWithReservation(int confNo, String cardName, int cardNo, Timestamp expDate)
+    {
+        RentModel model;
+        try{
+            model = dbHandler.rentAVehicleWithReservation(confNo, cardName, cardNo, expDate);
             //print out receipt
             System.out.print("Rental completed!");
             System.out.println("ConfirmationNo: " +  model.getConfNo());
