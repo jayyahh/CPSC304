@@ -52,7 +52,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
     }
 
     public void showAvailableVehicles(String location, Timestamp startDateTime, Timestamp endDateTime, String carType) {
-        VehicleModel[] result = dbHandler.getAvailableCarInfo(location, startDateTime, endDateTime, carType);
+        try{VehicleModel[] result = dbHandler.getAvailableCarInfo(location, startDateTime, endDateTime, carType);
         if (result.length == 0){
             System.out.println("No available vehicles for selected dates!");
             transaction.showMainMenu(this);
@@ -79,6 +79,9 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
 
                 transaction.showMainMenu(this);
             }
+        }}catch (SQLException e){
+            System.out.println(e.getMessage());
+            transaction.showMainMenu(this);
         }
     }
 
@@ -100,7 +103,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            e.printStackTrace();
+            transaction.showMainMenu(this);
         }
     }
 
@@ -126,6 +129,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
 
         }catch(SQLException e){
             System.out.println("Reservation failed:" + e.getMessage());
+            transaction.showMainMenu(this);
         }
     }
 
@@ -255,7 +259,7 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
             System.out.println("Gas Rate -" + model.valueDetails.tankRate);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            e.printStackTrace();
+            transaction.showMainMenu(this);
         }
     }
 
