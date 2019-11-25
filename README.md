@@ -9,7 +9,7 @@ Function - Generating report:
 1. Select which type of report you wish to generate by entering the corresponding number
 2. Enter the date, and select the location if prompted
 3. Enjoy the clear report!
-*To get results: 
+To get results: 
 - Rentals : Search for Oak, Vancouver , 10-30-2018
 - Returns : Search for Oak, Vancouver , 01-11-2018
 
@@ -17,7 +17,8 @@ Function - Viewing available vehicles:
 1. Select which vehicle type or all types
 2. Select which branch
 3. Enter the start date and end dates
-*To get results: Search for 'Standard', 'Oak, Vancouver' , 12-30-2020 to 12-31-2020
+To get results: 
+- Search for 'Standard', 'Oak, Vancouver' , 12-30-2020 to 12-31-2020
 
 Function - Making a reservation:
 1. Select which vehicle type 
