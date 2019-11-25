@@ -735,10 +735,12 @@ try{
 
 	public void update(String tableName, String pkColName, String pk, String colName, String var, boolean updateIntValue) {
 		try {
-			PreparedStatement ps = this.connection.prepareStatement("UPDATE ? SET ? = ? WHERE ? = ?");
-			ps.setString(1, tableName);
-			ps.setString(2, colName);
-			if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
+			String updateString = "UPDATE " + tableName + " SET " + colName  + "= ? WHERE " + pkColName + " = ? ";
+			PreparedStatement ps = this.connection.prepareStatement(updateString);
+			ps.setString(1, var);
+			ps.setString(2, pk);
+
+			/*if (tableName.equals("Customer") || tableName.equals("VehicleType")) {
 				ps.setString(3, var);
 			}
 			else {
@@ -754,7 +756,7 @@ try{
 			}
 			else {
 				ps.setString(5, pk);
-			}
+			}*/
 
 			int rowCount = ps.executeUpdate();
 
