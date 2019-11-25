@@ -1,9 +1,5 @@
 package ca.ubc.cs304.delegates;
 
-import ca.ubc.cs304.model.VehicleModel;
-
-import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 
 /**
