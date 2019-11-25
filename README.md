@@ -1,6 +1,6 @@
 # CPSC304
 
-1. Run our create_tables.sql and insert_stmts.sql files in our SQL folder to populate the data!
+1. Run our createTables.sql and insert.sql files in our SQL folder to populate the data!
 2. Open the program and run SuperRent
 3. After logging in, a terminal UI will appear with all the available functions to execute, type in the corresponding number of your desired action
 
@@ -38,3 +38,21 @@ Function - Return a vehicle:
 1. Enter rid - must be existing rid - for example 10
 2. Enter return date , odometer, tank full
 3. Receipt will be returned with all the information!
+
+Function - Insert into a table:
+1. Select which table to insert into
+2. And follow the instructions to enter the corresponding field
+
+Function - Update a table:
+1. Select which table to update
+2. And follow the instructions to enter the columns to update
+
+Function - Delete from a table:
+1. Select which table to delete from
+2. And follow the instructions to delete the tuples
+
+Function - View a table
+1. Select which table to view
+
+Function - View all tables
+1. View all the available tables in our database
