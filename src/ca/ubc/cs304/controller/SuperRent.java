@@ -57,6 +57,20 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
             System.out.println("No available vehicles for selected dates!");
             transaction.showMainMenu(this);
         }else{
+            System.out.printf("%-10.10s", "Vid");
+            System.out.printf("%-20.20s", "VLicense");
+            System.out.printf("%-15.15s", "Make");
+            System.out.printf("%-15.15s", "Model");
+            System.out.printf("%-15.15s", "Year");
+            System.out.printf("%-15.15s", "Color");
+            System.out.printf("%-15.15s", "Odometer");
+            System.out.printf("%-15.15s","Status");
+            System.out.printf("%-15.15s", "Vehicle Type");
+            System.out.printf("%-15.15s", "Location");
+            System.out.printf("%-15.15s", "City");
+            System.out.printf("%-15.15s", "Fuel Type");
+            System.out.println(" ");
+
             for (int i = 0; i < result.length; i++) {
                 VehicleModel model = result[i];
 
@@ -73,13 +87,14 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
                 System.out.printf("%-15.15s", model.getLocation());
                 System.out.printf("%-15.15s", model.getCity());
                 System.out.printf("%-15.15s", model.getFuelType());
-
                 System.out.println();
-                System.out.println("Number of available vehicles: " + result.length);
-
-                transaction.showMainMenu(this);
             }
-        }}catch (SQLException e){
+
+                System.out.println("Number of available vehicles: " + result.length);
+                transaction.showMainMenu(this);
+        }
+
+        }catch (SQLException e){
             System.out.println(e.getMessage());
             transaction.showMainMenu(this);
         }
@@ -89,16 +104,30 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
     {
         RentModel model;
         try{
+            if (!dbHandler.checkCustomer(dLicense)){
+                System.out.println("For first time renters, please enter your information.");
+                String name2 = transaction.enterAny("name");
+                String address = transaction.enterAny("address");
+                String phone = transaction.enterAny("phone");
+                dbHandler.createCustomer(dLicense, name2, address, phone);
+            }
+
+            if(dbHandler.getAvailableCarInfo(location,fromDateTime,toDateTime,vtname).length == 0){
+                System.out.print("No cars available for the selected inputs! Please try again");
+                transaction.showMainMenu(this);
+            }
 
             model = dbHandler.rentAVehicleWithoutReservation(vtname, dLicense, fromDateTime,toDateTime, name, cardName, cardNo, expDate, location);
             //print out receipt
-if (model.getRid() == 0) {
-transaction.showMainMenu(this);
-}
-            System.out.print("Rental completed!");
+            if (model.getRid() == 0) {
+            transaction.showMainMenu(this);
+            }
+            System.out.println("Rental completed!");
             System.out.println("ConfirmationNo: " +  model.getConfNo());
-            System.out.println("Rental Period: " +  model.getFromDate() + "to" + model.getToDate());
+            System.out.println("Rental Period: " +  model.getFromDate() + " to " + model.getToDate());
             System.out.println("Location: " + model.getLocation());
+
+            transaction.showMainMenu(this);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -114,10 +143,12 @@ transaction.showMainMenu(this);
                 transaction.showMainMenu(this);
             }
             //print out receipt
-            System.out.print("Rental completed!");
+            System.out.println("Rental completed!");
             System.out.println("ConfirmationNo: " +  model.getConfNo());
-            System.out.println("Rental Period: " +  model.getFromDate() + "to" + model.getToDate());
+            System.out.println("Rental Period: " +  model.getFromDate() + " to " + model.getToDate());
             System.out.println("Location: " + model.getLocation());
+
+            transaction.showMainMenu(this);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -127,14 +158,14 @@ transaction.showMainMenu(this);
 
     public void reserveVehicle(String carType, String dLicense, Timestamp startDateTime, Timestamp endDateTime, String location) {
         ReservationModel model;
+
         try {
             if (!dbHandler.checkCustomer(dLicense)){
                 System.out.println("For first time renters, please enter your information.");
-                String license = transaction.enterAny("driver's license");
                 String name = transaction.enterAny("name");
                 String address = transaction.enterAny("address");
                 String phone = transaction.enterAny("phone");
-                dbHandler.createCustomer(license, name, address, phone);
+                dbHandler.createCustomer(dLicense, name, address, phone);
             }
 
             if(dbHandler.getAvailableCarInfo(location,startDateTime,endDateTime,carType).length == 0){
@@ -142,7 +173,8 @@ transaction.showMainMenu(this);
                 transaction.showMainMenu(this);
             }
             model = dbHandler.makeReservation(carType, dLicense, startDateTime, endDateTime, location);
-            System.out.print("Reservation completed!");
+
+            System.out.println("Reservation completed!");
             System.out.println("ConfirmationNo: " +  model.getConfNo());
 
         }catch(SQLException e){

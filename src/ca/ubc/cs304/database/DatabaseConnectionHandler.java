@@ -44,6 +44,8 @@ public class DatabaseConnectionHandler {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, V.vtname, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND R.toDateTime >= ? GROUP BY V.location, V.vtname");
 			ps.setTimestamp(1, date);
 			ps.setTimestamp(2, date);
+			String sql = "SELECT V.location, V.vtname, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= " + date +  "AND R.toDateTime >= " + date + "GROUP BY V.location, V.vtname";
+			System.out.println("Generate rentals report query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyRentalReportModel report = new DailyRentalReportModel();
@@ -67,6 +69,8 @@ public class DatabaseConnectionHandler {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= ? AND R.toDateTime >= ? GROUP BY V.location");
 			ps.setTimestamp(1, date);
 			ps.setTimestamp(2, date);
+			String sql = "SELECT V.location, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= " + date + "AND R.toDateTime >=  " + date + "GROUP BY V.location";
+			System.out.println("Generate rental report per branch ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyRentalReportPerBranchModel report = new DailyRentalReportPerBranchModel();
@@ -88,6 +92,8 @@ public class DatabaseConnectionHandler {
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalNew FROM Rent R WHERE R.fromDateTime = ?");
 			ps.setTimestamp(1, date);
+			String sql = "SELECT COUNT(R.rid) AS totalNew FROM Rent R WHERE R.fromDateTime = " + date;
+			System.out.println("Generate total new rentals ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalNew");
@@ -108,6 +114,8 @@ public class DatabaseConnectionHandler {
 			ps.setTimestamp(1, date);
 			ps.setTimestamp(2, date);
 			ps.setString(3, branch);
+			String sql = "SELECT V.vtname, COUNT(R.rid) AS typeCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= " + date + "AND R.toDateTime >= " + date +  "AND V.location = " + branch  + "GROUP BY V.vtname";
+			System.out.println("Generate rentals report by branch ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyRentalReportModel report = new DailyRentalReportModel();
@@ -130,6 +138,8 @@ public class DatabaseConnectionHandler {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalNew FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime = ? AND V.location = ?");
 			ps.setTimestamp(1, date);
 			ps.setString(2, branch);
+			String sql = "SELECT COUNT(R.rid) AS totalNew FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime = " + date + "AND V.location = " + branch;
+			System.out.println("Generate total new rentals by branch ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalNew");
@@ -150,6 +160,8 @@ public class DatabaseConnectionHandler {
 			ps.setTimestamp(1, date);
 			ps.setTimestamp(2, date);
 			ps.setString(3, branch);
+			String sql = "SELECT COUNT(R.rid) AS totalCount FROM Rent R, Vehicle V WHERE R.vid = V.vid AND R.fromDateTime <= " + date + "AND" + date + " <= R.toDateTime  AND V.location = " + branch;
+			System.out.println("Generate total rentals by branch ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalCount");
@@ -168,6 +180,8 @@ public class DatabaseConnectionHandler {
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? GROUP BY V.location, V.vtname");
 			ps.setTimestamp(1, date);
+			String sql = "SELECT V.location, V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = " + date + " GROUP BY V.location, V.vtname";
+			System.out.println("Generate returns report ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyReturnReportModel report = new DailyReturnReportModel();
@@ -191,6 +205,8 @@ public class DatabaseConnectionHandler {
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.location, COUNT(Ret.rid) AS totalReturnCount, SUM(Ret.value) AS totalBranchValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? GROUP BY V.location");
 			ps.setTimestamp(1, date);
+			String sql = "SELECT V.location, COUNT(Ret.rid) AS totalReturnCount, SUM(Ret.value) AS totalBranchValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = " + date + "GROUP BY V.location";
+			System.out.println("Generate returns report by branch ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyReturnReportPerBranchModel report = new DailyReturnReportPerBranchModel();
@@ -213,6 +229,8 @@ public class DatabaseConnectionHandler {
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT SUM(R.value) AS totalNew FROM Return R WHERE R.returnDateTime = ?");
 			ps.setTimestamp(1, date);
+			String sql = "SELECT SUM(R.value) AS totalNew FROM Return R WHERE R.returnDateTime =  " + date;
+			System.out.println("Generate total daily earnings ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalNew");
@@ -231,6 +249,8 @@ public class DatabaseConnectionHandler {
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(R.rid) AS totalNew FROM Return R WHERE R.returnDateTime = ?");
 			ps.setTimestamp(1, date);
+			String sql = "SELECT COUNT(R.rid) AS totalNew FROM Return R WHERE R.returnDateTime = " + date;
+			System.out.println("Generate new returns report ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalNew");
@@ -250,6 +270,8 @@ public class DatabaseConnectionHandler {
 			PreparedStatement ps = connection.prepareStatement("SELECT V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = ? AND V.location = ? GROUP BY V.vtname");
 			ps.setTimestamp(1, date);
 			ps.setString(2, branch);
+			String sql = "SELECT V.vtname, COUNT(Ret.rid) AS typeCount, SUM(Ret.value) AS totalTypeValue FROM Rent Ren, Return Ret, Vehicle V WHERE Ren.vid = V.vid AND Ren.rid = Ret.rid AND Ret.returnDateTime = " + date + "AND V.location =" + branch + "GROUP BY V.vtname";
+			System.out.println("Generate returns report by branch ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				DailyReturnReportModel report = new DailyReturnReportModel();
@@ -273,6 +295,8 @@ public class DatabaseConnectionHandler {
 			PreparedStatement ps = connection.prepareStatement("SELECT COUNT(Ret.rid) AS totalReturnOfBranch FROM Return Ret, Rent Ren, Vehicle V WHERE Ret.returnDateTime = ? AND V.location = ? AND Ret.rid = Ren.rid AND Ren.vid = V.vid");
 			ps.setTimestamp(1, date);
 			ps.setString(2, location);
+			String sql = "SELECT COUNT(Ret.rid) AS totalReturnOfBranch FROM Return Ret, Rent Ren, Vehicle V WHERE Ret.returnDateTime = " + date + "AND V.location = " + location + " AND Ret.rid = Ren.rid AND Ren.vid = V.vid";
+			System.out.println("Generate total return by branch ran query: " + sql);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()){
 				totalNew = rs.getInt("totalReturnOfBranch");
@@ -290,6 +314,8 @@ public class DatabaseConnectionHandler {
 		int totalNew = 0;
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT SUM(Ret.value) AS totalBranchEarning FROM Return Ret, Rent Ren, Vehicle V WHERE Ret.returnDateTime = ? AND V.location = ? AND Ret.rid = Ren.rid AND Ren.vid = V.vid");
+			String sql = "SELECT SUM(Ret.value) AS totalBranchEarning FROM Return Ret, Rent Ren, Vehicle V WHERE Ret.returnDateTime = " + date + "AND V.location = " + location + " AND Ret.rid = Ren.rid AND Ren.vid = V.vid";
+			System.out.println("Generate total daily earning by branch ran query: " + sql);
 			ps.setTimestamp(1, date);
 			ps.setString(2, location);
 			ResultSet rs = ps.executeQuery();
@@ -305,7 +331,7 @@ public class DatabaseConnectionHandler {
 	}
 
 
-	public void createCustomer(String dLicense, String name, String address, String phone){
+	public void createCustomer(String dLicense, String name, String address, String phone) throws SQLException {
 		CustomerModel model = new CustomerModel(phone,name,address, dLicense);
 		insert("Customer", model);
 	}
@@ -329,7 +355,7 @@ public class DatabaseConnectionHandler {
 	}
 
 	public ReservationModel makeReservation (String vtname, String dLicense, Timestamp fromDateTime,Timestamp toDateTime, String location) throws SQLException {
-try{
+		try{
 		int defaultConfNo= 1000000;
 		Statement stmt = connection.createStatement();
 		ResultSet rs2 = stmt.executeQuery("select count(distinct confNo)  AS nums from reservation");
@@ -338,13 +364,13 @@ try{
 			defaultConfNo = 1000000 + rs2.getInt("nums");
 		}
 
-
 		ReservationModel model = new ReservationModel(defaultConfNo, vtname, dLicense, fromDateTime, toDateTime, location);
 
 		insert("Reservation", model);
 
 		return model;
-	}catch(SQLException e){
+
+	}catch(SQLException e) {
 	throw new SQLException(e.getMessage());
 	}
 	}
@@ -426,6 +452,9 @@ try{
 		ArrayList<VehicleModel> result = new ArrayList<VehicleModel>();
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT * FROM Vehicle WHERE status = ? and location = ? and (vtname = ? or (? IS NULL or ? = '')) order by make");
+			System.out.println("View all vehicles Ran Query: SELECT * FROM Vehicle WHERE status = 'Available' and location = " + location +  "and (vtname = " + vtName +  "or (" + vtName +" IS NULL or " +vtName + "= '')) order by make ");
+
+
 			ps.setString(1, "Available");
 			ps.setString(2, location);
 			ps.setString(3, vtName);
@@ -433,18 +462,7 @@ try{
 			ps.setString(5, vtName);
 
 			ResultSet rs = ps.executeQuery();
-//
-//    		ResultSetMetaData rsmd = rs.getMetaData();
-//
-//    		System.out.println(" ");
-//
-//    		// display column names;
-//    		for (int i = 0; i < rsmd.getColumnCount(); i++) {
-//    			// get column name and print it
-//    			System.out.printf("%-15s", rsmd.getColumnName(i + 1));
-//    		}
-//
-//    		System.out.println(" ");
+
 			while(rs.next()) {
 				VehicleModel model = new VehicleModel(rs.getInt("vid"),
 						rs.getString("vLicense"),
@@ -493,8 +511,10 @@ try{
 			int vid = rs.getInt("vid");
 			PreparedStatement vt = connection.prepareStatement("update VehicleType set numAvail = numAvail + 1 where vtname = ?");
 			vt.setString (1, vtName);
+			System.out.println("Return Ran Query: update VehicleType set numAvail = numAvail + 1 where vtname = " + vtName);
 			vt.executeUpdate();
 			PreparedStatement updateCar = connection.prepareStatement("update Vehicle set status = 'Available' where vid = ?");
+			System.out.println("Return Ran Query: update Vehicle set status = 'Available' where vid = " + vid);
 			updateCar.setInt(1,vid);
 			updateCar.executeUpdate();
 			RentalValue value = calculateValue(fromDateTime, returnDateTime, vtName, beginningOdometer, odometerReading, isTankFull);
@@ -614,7 +634,7 @@ try{
 	}
 
 	/** Dynamically constructs an insert statement based on given object*/
-	public void insert(String tableName, Object o) {
+	public void insert(String tableName, Object o) throws SQLException {
 		try {
 			PreparedStatement ps;
 			switch (tableName) {
@@ -625,6 +645,10 @@ try{
 					ps.setString(2, customer.getName());
 					ps.setString(3, customer.getAddress());
 					ps.setString(4, customer.getCellPhone());
+
+					System.out.println("Query ran: INSERT INTO customer VALUES (" +customer.getdLicense()+"," + customer.getName()+","+customer.getAddress()+","+customer.getCellPhone()+")");
+
+
 
 					ps.executeUpdate();
 					connection.commit();
@@ -639,7 +663,7 @@ try{
 					ps.setInt(3, returnModel.getOdometer());
 					ps.setBoolean(4, returnModel.isFullTank());
 					ps.setDouble(5, returnModel.getValue());
-
+					System.out.println("Query ran: INSERT INTO return VALUES (" +returnModel.getRid()+"," + returnModel.getReturnDate() +","+returnModel.getOdometer()+","+returnModel.isFullTank() +"," + returnModel.getValue() +")");
 					ps.executeUpdate();
 					connection.commit();
 
@@ -658,6 +682,8 @@ try{
 					ps.setInt(8, rent.getCardNo());
 					ps.setTimestamp(9, rent.getExpDate());
 					ps.setInt(10, rent.getConfNo());
+					System.out.println("Query ran: INSERT INTO rent VALUES (" + rent.getRid()+"," + rent.getVid() +","+rent.getdLicense()+","+rent.getFromDate() +"," + rent.getToDate() +","+rent.getOdometer() +"," +
+							rent.getCardName() + "," + rent.getCardNo() +","+rent.getExpDate() + "," + rent.getConfNo()+")");
 
 					ps.executeUpdate();
 					connection.commit();
@@ -674,6 +700,8 @@ try{
 					ps.setTimestamp(5, reservation.getToDate());
 					ps.setString(6, reservation.getLocation());
 					ps.setString(7, reservation.getCityFromLocation(reservation.getLocation()));
+
+					System.out.println("Query ran: INSERT INTO reservation VALUES (" +reservation.getConfNo()+"," + reservation.getVtname() +","+reservation.getdLicense()+","+reservation.getFromDate() +"," + reservation.getToDate() +","+reservation.getLocation() +"," + reservation.getCityFromLocation(reservation.getLocation()) + ")");
 					ps.executeUpdate();
 					connection.commit();
 
@@ -695,6 +723,8 @@ try{
 					ps.setString(11, vehicle.getCity());
 					ps.setString(12, vehicle.getFuelType());
 
+					System.out.println("Query ran: INSERT INTO Vehicle VALUES (" + vehicle.getVid()+"," + vehicle.getVLicense() +","+vehicle.getMake()+","+vehicle.getModel() +"," + vehicle.getColor() +","+vehicle.getOdometer() +"," +
+							vehicle.getStatus() + "," + vehicle.getVtname() +","+vehicle.getLocation() + "," +vehicle.getCity() + "," + vehicle.getFuelType()+")");
 					ps.executeUpdate();
 					connection.commit();
 
@@ -702,7 +732,7 @@ try{
 					break;
 				case "VehicleType":
 					VehicleTypeModel vType = (VehicleTypeModel) Class.forName("ca.ubc.cs304.model.VehicleTypeModel").cast(o);
-					ps = connection.prepareStatement("INSERT INTO VehicleType VALUES (?,?,?,?,?,?,?,?)");
+					ps = connection.prepareStatement("INSERT INTO VehicleType VALUES (?,?,?,?,?,?,?,?,?)");
 					ps.setString(1, vType.getVtname());
 					ps.setString(2, vType.getFeatures());
 					ps.setDouble(3, vType.getWRate());
@@ -711,7 +741,9 @@ try{
 					ps.setDouble(6, vType.getDiRate());
 					ps.setDouble(7, vType.getHiRate());
 					ps.setDouble(8,vType.getKRate());
-
+					ps.setDouble(9,vType.getNumAvail());
+					System.out.println("Query ran: INSERT INTO VehicleType VALUES (" + vType.getVtname()+"," + vType.getFeatures() +","+vType.getWRate()+","+vType.getDRate() +"," + vType.getHRate() +","+vType.getDiRate() +"," +
+							vType.getHiRate() + "," + vType.getKRate() + vType.getNumAvail()+")");
 					ps.executeUpdate();
 					connection.commit();
 
@@ -724,6 +756,8 @@ try{
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 			rollbackConnection();
+			throw new SQLException(e.getMessage());
+
 		}
 		catch (ClassNotFoundException e) {
 			System.out.println("The object type given was not found.");
@@ -771,7 +805,7 @@ try{
 
 	}
 
-	public Object[] viewTable(String tableName) {
+	public Object[] viewTable(String tableName) throws SQLException {
 		ArrayList<Object> result = new ArrayList<Object>();
 		String query = "SELECT * FROM " + tableName;
 
@@ -853,17 +887,19 @@ try{
 						break;
 				}
 			}
+
 			rs.close();
 			stmt.close();
 
 		} catch (SQLException var5) {
 			System.out.println("[EXCEPTION] " + var5.getMessage());
+			throw new SQLException(var5.getMessage());
 		}
 
 		return (Object[]) result.toArray(new Object[result.size()]);
 	}
 
-	public ArrayList<String> viewAllTables() {
+	public ArrayList<String> viewAllTables() throws SQLException {
 		ArrayList<String> result = new ArrayList<String>();
 		try {
 			Statement stmt = connection.createStatement();
@@ -874,6 +910,7 @@ try{
 
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + e.getMessage());
+			throw new SQLException(e.getMessage());
 		}
 
 		return result;

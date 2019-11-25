@@ -395,7 +395,8 @@ public class SuperRentTerminalTransactions {
         System.out.println("5. Full-size");
         System.out.println("6. SUV");
         System.out.println("7. Truck");
-        System.out.println("8. Quit");
+        System.out.println("8. All Types");
+        System.out.println("9. Quit");
         while (choice < 0 || choice > 8) {
             choice = readInteger(true);
             if (choice != INVALID_INPUT) {
@@ -425,6 +426,9 @@ public class SuperRentTerminalTransactions {
                         carType = "Truck";
                         break;
                     case 8:
+                        carType = "";
+                        break;
+                    case 9:
                         handleQuitOption();
                         break;
                     default:
