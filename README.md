@@ -6,6 +6,6 @@
 
 
 Function - Generating report:
-1. Select which type of report you wish to generate
+1. Select which type of report you wish to generate by entering the corresponding number
 2. Enter the date, and select the location if prompted
 3. Enjoy the clear report!
