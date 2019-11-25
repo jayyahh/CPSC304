@@ -252,10 +252,10 @@ public class SuperRent implements LoginWindowDelegate, MainTerminalTransactionsD
             System.out.println("Rental Days: " +  model.valueDetails.numDays);
             System.out.println("Total Cost: $" + model.getValue());
             System.out.println("Cost breakdown: ");
-            System.out.println("Rental Rate - " + model.valueDetails.rateValue);
-            System.out.println("Insurance Rate - " + model.valueDetails.insuranceValue);
-            System.out.println("Mileage Rate - " + model.valueDetails.kmValue);
-            System.out.println("Gas Rate -" + model.valueDetails.tankRate);
+            System.out.println("Rental Rate - $" + model.valueDetails.rateValue);
+            System.out.println("Insurance Rate - $" + model.valueDetails.insuranceValue);
+            System.out.println("Mileage Rate - $" + model.valueDetails.kmValue);
+            System.out.println("Gas Rate - $" + model.valueDetails.tankRate);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             transaction.showMainMenu(this);
