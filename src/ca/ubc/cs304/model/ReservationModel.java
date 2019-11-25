@@ -42,4 +42,17 @@ public class ReservationModel {
     }
 
     public String getLocation() {return this.location; }
+
+    public String getCityFromLocation(String location) {
+        switch(location) {
+            case "SunnyCoast":
+                return "Whistler";
+            case "Bridgeport":
+                return "Richmond";
+            case "Bay":
+                return "Seattle";
+            default:
+                return "Vancouver";
+        }
+    }
 }

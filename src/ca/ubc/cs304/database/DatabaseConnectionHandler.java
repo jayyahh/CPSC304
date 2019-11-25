@@ -671,13 +671,14 @@ try{
 					break;
 				case "Reservation":
 					ReservationModel reservation = (ReservationModel) Class.forName("ca.ubc.cs304.model.ReservationModel").cast(o);
-					ps = connection.prepareStatement("INSERT INTO reservation VALUES (?,?,?,?,?,?)");
+					ps = connection.prepareStatement("INSERT INTO reservation VALUES (?,?,?,?,?,?,?)");
 					ps.setInt(1, reservation.getConfNo());
 					ps.setString(2, reservation.getVtname());
 					ps.setString(3, reservation.getdLicense());
 					ps.setTimestamp(4, reservation.getFromDate());
 					ps.setTimestamp(5, reservation.getToDate());
 					ps.setString(6, reservation.getLocation());
+					ps.setString(7, reservation.getCityFromLocation(reservation.getLocation()));
 					ps.executeUpdate();
 					connection.commit();
 
