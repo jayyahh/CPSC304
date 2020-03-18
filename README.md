@@ -1,4 +1,4 @@
-# CPSC304
+# CPSC304 - SuperRent
 
 1. Run our createTables.sql and insert.sql files in our SQL folder to populate the data!
 2. Open the program and run SuperRent
